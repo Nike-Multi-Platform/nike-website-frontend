@@ -1,0 +1,98 @@
+[
+    {
+        "id": 1,
+        "name": "Nike Air Max 270",
+        "price": 150,
+        "image": "/images-product/nike-air-max-270.png",
+        "description": "Nike Air Max 270 is inspired by two icons of big Air: Air Max 180 and Air Max 93.",
+        "category": "Lifestyle"
+    },
+    {
+        "id": 2,
+        "name": "Nike Air Force 1",
+        "price": 120,
+        "image": "/images-product/nike-air-force-1.png",
+        "description": "The legend lives on in the Nike Air Force 1.",
+        "category": "Lifestyle"
+    },
+    {
+        "id": 3,
+        "name": "Nike Blazer Mid '77",
+        "price": 100,
+        "image": "/images-product/nike-blazer-mid-77.png",
+        "description": "The Nike Blazer Mid '77 Vintage has a timeless design.",
+        "category": "Lifestyle"
+    },
+    {
+        "id": 4,
+        "name": "Nike React Infinity Run",
+        "price": 160,
+        "image": "/images-product/nike-react-infinity-run.png",
+        "description": "The Nike React Infinity Run is built for comfort and stability.",
+        "category": "Running"
+    },
+    {
+        "id": 5,
+        "name": "Nike ZoomX Vaporfly NEXT% 2",
+        "price": 250,
+        "image": "/images-product/nike-zoomx-vaporfly-next-2.png",
+        "description": "Engineered for speed, the Nike ZoomX Vaporfly NEXT% 2 is made for the race.",
+        "category": "Running"
+    },
+    {
+        "id": 6,
+        "name": "Nike Air Zoom Pegasus 38",
+        "price": 130,
+        "image": "/images-product/nike-air-zoom-pegasus-38.png",
+        "description": "The Nike Air Zoom Pegasus 38 is a reliable partner for your daily run.",
+        "category": "Running"
+    },
+    {
+        "id": 7,
+        "name": "Nike Air Presto",
+        "price": 110,
+        "image": "/images-product/nike-air-presto.png",
+        "description": "The Nike Air Presto offers a snug fit for everyday wear.",
+        "category": "Lifestyle"
+    },
+    {
+        "id": 8,
+        "name": "Nike Dunk Low",
+        "price": 120,
+        "image": "/images-product/nike-dunk-low.png",
+        "description": "The Nike Dunk Low is a classic silhouette that never goes out of style.",
+        "category": "Lifestyle"
+    },
+    {
+        "id": 9,
+        "name": "Nike Air Max 90",
+        "price": 140,
+        "image": "/images-product/nike-air-max-90.png",
+        "description": "The Nike Air Max 90 offers a timeless design and comfort.",
+        "category": "Lifestyle"
+    },
+    {
+        "id": 10,
+        "name": "Nike SB Dunk High",
+        "price": 160,
+        "image": "/images-product/nike-sb-dunk-high.png",
+        "description": "The Nike SB Dunk High combines skate culture and basketball heritage.",
+        "category": "Skateboarding"
+    },
+    {
+        "id": 11,
+        "name": "Nike Air Huarache",
+        "price": 130,
+        "image": "/images-product/nike-air-huarache.png",
+        "description": "The Nike Air Huarache features a sock-like fit for superior comfort.",
+        "category": "Lifestyle"
+    },
+    {
+        "id": 12,
+        "name": "Nike Air Max 1",
+        "price": 150,
+        "image": "/images-product/nike-air-max-1.png",
+        "description": "The Nike Air Max 1 is the original Air Max, offering iconic style.",
+        "category": "Lifestyle"
+    }
+]
