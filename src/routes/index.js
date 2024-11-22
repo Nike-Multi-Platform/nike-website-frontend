@@ -29,7 +29,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/categories",
-        element: <CategoriesProduct />,
+        element: (
+          <AuthLayout>
+            <CategoriesProduct />
+          </AuthLayout>
+        ),
       },
       //Add more routes here
     ],

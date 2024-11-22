@@ -5,6 +5,7 @@ import { BiUser } from "react-icons/bi";
 import { Drawer, Popover } from "antd";
 import { CiMenuBurger } from "react-icons/ci";
 import DrawerMenuContent from "../categories/DrawerMenuContent";
+import DrawerSearchContent from "../categories/DrawerSearchContent";
 
 const Header = () => {
   const [localState, setLocalState] = useReducer(
@@ -12,71 +13,99 @@ const Header = () => {
       return { ...state, [action.type]: action.payload };
     },
     {
-      drawer: {
-        type: "search",
-        visible: false,
-      },
+      openSearchDrawer: false,
+      openMenuDrawer: false,
     }
   );
 
   const handleOnClick = (type) => {
-    setLocalState({ type: "drawer", payload: { type, visible: true } });
+    if (type === "search") {
+      setLocalState({
+        type: "openSearchDrawer",
+        payload: !localState.openSearchDrawer,
+      });
+    } else {
+      setLocalState({
+        type: "openMenuDrawer",
+        payload: !localState.openMenuDrawer,
+      });
+    }
+  };
+
+  const handleOnClose = (type) => {
+    if (type === "search") {
+      setLocalState({
+        type: "openSearchDrawer",
+        payload: false,
+      });
+    } else {
+      setLocalState({
+        type: "openMenuDrawer",
+        payload: false,
+      });
+    }
   };
 
   return (
     <>
-      <header className="w-full bg-white flex items-center justify-center">
-        <div className="w-[90%] flex justify-between items-center">
+      <header
+        className={`w-full bg-white flex items-center justify-center shadow-md sticky ${
+          localState.openMenuDrawer || localState.openSearchDrawer
+            ? "z-0"
+            : "z-[99999999]"
+        } top-0`}
+      >
+        <div className="w-[1400px] flex justify-between items-center">
           <span
             className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full text-3xl cursor-pointer"
             onClick={() => handleOnClick("menu")}
           >
             <CiMenuBurger />
           </span>
-          <div className="w-full flex justify-center items-center">
+          <a href="/" className="w-full flex justify-center items-center">
             <img src={HamanLogo} alt="" className="ml-24 w-72" />
-          </div>
+          </a>
 
           <div className="flex justify-center items-center gap-2 text-xl font-semibold">
             <div
-              className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full"
+              className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer"
               onClick={() => handleOnClick("search")}
             >
               <BsSearch />
             </div>
-            <div
-              className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full"
-              onClick={() => handleOnClick("search")}
-            >
+            <div className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer">
               <BsHeart />
             </div>
-            <div
-              className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full"
-              onClick={() => handleOnClick("search")}
-            >
+            <div className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer">
               <BsBag />
             </div>
-            <div
-              className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full"
-              onClick={() => handleOnClick("search")}
-            >
+            <div className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer">
               <BiUser />
             </div>
           </div>
         </div>
       </header>
       <Drawer
-        placement={localState.drawer.type === "search" ? "top" : "left"}
-        open={localState.drawer.visible}
+        placement="left"
+        open={localState.openMenuDrawer}
         closable={false}
-        onClose={() =>
-          setLocalState({
-            type: "drawer",
-            payload: { type: "", visible: false },
-          })
-        }
+        onClose={() => handleOnClose("menu")}
       >
-        {localState.drawer.type === "menu" && <DrawerMenuContent />}
+        <DrawerMenuContent
+          open={localState.openMenuDrawer}
+          onClose={() => handleOnClose("menu")}
+        />
+      </Drawer>
+      <Drawer
+        placement="top"
+        open={localState.openSearchDrawer}
+        closable={false}
+        onClose={() => handleOnClose("search")}
+      >
+        <DrawerSearchContent
+          open={localState.openSearchDrawer}
+          onClose={() => handleOnClose("search")}
+        />
       </Drawer>
     </>
   );
