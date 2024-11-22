@@ -1,11 +1,14 @@
+import { Toaster } from "react-hot-toast";
 import "./App.css";
-import CategoriesProduct from "./CategoriesProduct";
-
+import { Outlet } from "react-router-dom";
 function App() {
   return (
-    <div className="App">
-      <CategoriesProduct />
-    </div>
+    <>
+      <Toaster />
+      <main>
+        <Outlet />
+      </main>
+    </>
   );
 }
 

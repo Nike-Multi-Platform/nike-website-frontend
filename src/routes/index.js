@@ -3,6 +3,7 @@ import App from "../App";
 import AuthLayout from "../layout";
 import { createBrowserRouter } from "react-router-dom";
 import { Spin } from "antd";
+import CategoriesProduct from "../CategoriesProduct";
 const Home = lazy(() => import("../pages/Home"));
 
 const router = createBrowserRouter([
@@ -11,7 +12,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "",
+        path: "/",
         element: (
           <AuthLayout>
             <Suspense
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
             </Suspense>
           </AuthLayout>
         ),
+      },
+      {
+        path: "/categories",
+        element: <CategoriesProduct />,
       },
       //Add more routes here
     ],
