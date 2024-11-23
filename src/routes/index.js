@@ -5,7 +5,8 @@ import { createBrowserRouter } from "react-router-dom";
 import { Spin } from "antd";
 import CategoriesProduct from "../CategoriesProduct";
 const Home = lazy(() => import("../pages/Home"));
-
+const Login = lazy(() => import("../pages/authentication/Login"));
+const Register = lazy(() => import("../pages/authentication/Register"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -35,6 +36,22 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
+      {
+        path: "/login",
+        element: (
+          <AuthLayout>
+            <Login />
+          </AuthLayout>
+        )
+      },
+      {
+        path: "/register",
+        element: (
+          <AuthLayout>
+            <Register />
+          </AuthLayout>
+        )
+      }
       //Add more routes here
     ],
   },
