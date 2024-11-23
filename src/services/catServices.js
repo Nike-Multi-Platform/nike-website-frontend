@@ -14,3 +14,14 @@ export const getCategories = async () => {
     console.error(error);
   }
 };
+
+export const getIcons = async (page, limit) => {
+  try {
+    const response = await axios.get(
+      `${url}/Product/product-icons?page=${page}&limit=${limit}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

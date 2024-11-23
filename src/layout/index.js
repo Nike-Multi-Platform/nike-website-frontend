@@ -4,7 +4,7 @@ import Header from "../components/headers/Header";
 const AuthLayout = ({ children }) => {
   return (
     <>
-      <Header />
+      <Header />  
       {children}
     </>
   );

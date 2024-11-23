@@ -2,6 +2,8 @@ import React from "react";
 import Intro from "../assets/intro.mp4";
 import { Button, Carousel } from "antd";
 import { icons } from "antd/es/image/PreviewGroup";
+import IconsContainer from "../components/product-icons/IconsContainer";
+import NewRelease from "../components/product-icons/NewRelease";
 const Home = () => {
   const icons = [
     {
@@ -62,27 +64,8 @@ const Home = () => {
           </Button>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
-        <span className="font-nike text-display2 uppercase text-2xl font-semibold">
-          Icons
-        </span>
-        <Carousel
-          arrows
-          rows={1}
-          slidesToShow={4}
-          className="container-carousel"
-          infinite={false}
-          dots={false}
-          centerMode={false}
-          focusOnSelect={true}
-        >
-          {icons.map((icon) => (
-            <div key={icon.id} className="h-[400px] ">
-              <img src={icon.thumbnail} alt="" className="w-full h-full" />
-            </div>
-          ))}
-        </Carousel>
-      </div>
+      <IconsContainer />
+      <NewRelease />
     </div>
   );
 };
