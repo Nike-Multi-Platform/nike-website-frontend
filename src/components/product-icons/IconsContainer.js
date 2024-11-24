@@ -37,7 +37,9 @@ const IconsContainer = () => {
         arrows
         rows={1}
         slidesToShow={4}
-        className="container-carousel"
+        className={`container-carousel ${
+          localState.icons.length < 4 ? "not-enough-slide" : ""
+        }`}
         infinite={false}
         dots={false}
         centerMode={false}

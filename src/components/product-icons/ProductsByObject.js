@@ -41,8 +41,8 @@ const ProductsByObject = (props) => {
             </span>
           </div>
           <div className="grid grid-cols-12 gap-4">
-            {localState.products.map((product) => (
-              <ProductCard product={product} />
+            {localState.products.map((product, key) => (
+              <ProductCard product={product} key={key} />
             ))}
           </div>
         </div>

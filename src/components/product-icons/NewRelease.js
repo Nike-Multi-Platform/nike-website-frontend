@@ -38,8 +38,8 @@ const NewRelease = () => {
             </span>
           </div>
           <div className="grid grid-cols-12 gap-4">
-            {localState.newReleases.map((release) => (
-              <ProductCard product={release} />
+            {localState.newReleases.map((release, key) => (
+              <ProductCard product={release} key={key} />
             ))}
           </div>
         </div>

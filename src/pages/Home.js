@@ -14,6 +14,9 @@ import Banner10 from "../assets/banner10.gif";
 
 import withSuspense from "../hooks/HOC/withSuspense";
 
+const FlashSaleSection = withSuspense(
+  lazy(() => import("../components/product-icons/FlashSaleSection"))
+);
 const ProductsByObject = withSuspense(
   lazy(() => import("../components/product-icons/ProductsByObject"))
 );
@@ -28,7 +31,7 @@ const Home = () => {
   const banner = [Banner3, Banner4, Banner5, Banner6, Banner7];
 
   return (
-    <div className="bg-white max-w-[1400px] mx-auto my-4 flex flex-col gap-4">
+    <div className="bg-white max-w-[1400px] mx-auto my-4 flex flex-col gap-10">
       <div className="w-full my-4">
         <video autoPlay loop muted className="w-full">
           <source src={Intro} type="video/mp4" />
@@ -64,9 +67,12 @@ const Home = () => {
         </div>
       </div>
 
+      <FlashSaleSection />
+
       <div className="my-4 w-full">
         <img src={Banner2} className="w-full" />
       </div>
+
       <NewRelease />
       <div className="my-4 w-full">
         <img src={Banner1} />

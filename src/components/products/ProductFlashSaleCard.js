@@ -1,43 +1,31 @@
 import React, { memo, useMemo } from "react";
-import { isNewRelease } from "../../helpers/isNewRelease";
-import { Image } from "antd";
 import { getImageByCloudinary } from "../../helpers/getImageByCloudinary";
+import { Image } from "antd";
 
-const ProductCard = (props) => {
-  const { product, key } = props;
-
+const ProductFlashSaleCard = (props) => {
+  const { product, status, key } = props;
   const salePrice =
     product?.registerFlashSaleProduct !== null
       ? product?.registerFlashSaleProduct?.flashSalePrice
       : product.salePrice !== null
       ? product.salePrice
       : 0;
+  const isStock = product?.quantity - product?.sold > 0;
   const salePercent = useMemo(() => {
     if (salePrice === 0) return 0;
     return Math.round(
       ((product.productPrice - salePrice) / product.productPrice) * 100
     );
   }, [salePrice, product.productPrice]);
-  const newRelease = isNewRelease(product.createdAt);
-  const isStock = product?.quantityInStock > 0;
   return (
-    <div
-      className="col-span-3 flex flex-col hover:shadow-lg rounded-md cursor-pointer"
-      key={key}
-    >
+    <div className="w-[340px] flex flex-col gap-2 rounded-md" key={key}>
       <div className="relative">
         <Image
-          src={getImageByCloudinary(product.thumbnail, 384, 384)}
-          className="size-[344px]"
+          src={getImageByCloudinary(product.thumbnail, 350, 350)}
+          className=""
         />
-        {(newRelease || salePercent !== 0) && (
+        {salePercent !== 0 && status === "active" && (
           <div className="absolute top-0 left-0 flex gap-2">
-            {newRelease && (
-              <span className="rounded bg-orange-600 text-white px-2 py-1 text-xs font-nikeBody">
-                New
-              </span>
-            )}
-
             {salePercent !== 0 && (
               <span className="rounded bg-green-400 text-white px-2 py-1 text-xs font-nikeBody">
                 -{salePercent}%
@@ -64,7 +52,7 @@ const ProductCard = (props) => {
         <span className="font-nikeBody text-sm text-neutral-500">
           {product.categoryWithObjectName}
         </span>
-        {isStock && (
+        {status === "active" && isStock && (
           <div className={`flex gap-2 items-center `}>
             {salePrice === 0 && (
               <span className="font-nikeBody text-body1 font-semibold text-base text-neutral-700">
@@ -84,14 +72,18 @@ const ProductCard = (props) => {
             )}
           </div>
         )}
-        {!isStock && (
-          <span className="font-nikeBody text-body1 font-semibold text-base text-red-600">
-            Out of stock
-          </span>
+        {status === "active" && !isStock && (
+          <div className="text-red-500 font-semibold">Out Of Stock</div>
+        )}
+        {status === "ended" && (
+          <div className="text-red-500 font-semibold">Ended</div>
+        )}
+        {status === "waiting" && (
+          <div className="text-green-500 font-semibold">Coming soon</div>
         )}
       </div>
     </div>
   );
 };
 
-export default memo(ProductCard);
+export default memo(ProductFlashSaleCard);
