@@ -1,47 +1,31 @@
-import React from "react";
+import React, { lazy } from "react";
 import Intro from "../assets/intro.mp4";
 import { Button, Carousel } from "antd";
-import { icons } from "antd/es/image/PreviewGroup";
-import IconsContainer from "../components/product-icons/IconsContainer";
-import NewRelease from "../components/product-icons/NewRelease";
+import Banner1 from "../assets/banner1.png";
+import Banner2 from "../assets/banner2.png";
+import Banner3 from "../assets/banner3.png";
+import Banner4 from "../assets/banner4.png";
+import Banner5 from "../assets/banner5.png";
+import Banner6 from "../assets/banner6.png";
+import Banner7 from "../assets/banner7.png";
+import Banner8 from "../assets/banner8.png";
+import Banner9 from "../assets/banner9.gif";
+import Banner10 from "../assets/banner10.gif";
+
+import withSuspense from "../hooks/HOC/withSuspense";
+
+const ProductsByObject = withSuspense(
+  lazy(() => import("../components/product-icons/ProductsByObject"))
+);
+const IconsContainer = withSuspense(
+  lazy(() => import("../components/product-icons/IconsContainer"))
+);
+const NewRelease = withSuspense(
+  lazy(() => import("../components/product-icons/NewRelease"))
+);
+
 const Home = () => {
-  const icons = [
-    {
-      id: 1,
-      thumbnail:
-        "https://static.nike.com/a/images/f_auto/dpr_0.8,cs_srgb/w_2537,c_limit/32a8910a-96a5-4e36-9fbd-b9b729f56b09/nike-just-do-it.png",
-    },
-    {
-      id: 1,
-      thumbnail:
-        "https://static.nike.com/a/images/f_auto/dpr_0.8,cs_srgb/w_2537,c_limit/32a8910a-96a5-4e36-9fbd-b9b729f56b09/nike-just-do-it.png",
-    },
-    {
-      id: 1,
-      thumbnail:
-        "https://static.nike.com/a/images/f_auto/dpr_0.8,cs_srgb/w_2537,c_limit/32a8910a-96a5-4e36-9fbd-b9b729f56b09/nike-just-do-it.png",
-    },
-    {
-      id: 1,
-      thumbnail:
-        "https://static.nike.com/a/images/f_auto/dpr_0.8,cs_srgb/w_2537,c_limit/32a8910a-96a5-4e36-9fbd-b9b729f56b09/nike-just-do-it.png",
-    },
-    {
-      id: 1,
-      thumbnail:
-        "https://static.nike.com/a/images/f_auto/dpr_0.8,cs_srgb/w_2537,c_limit/32a8910a-96a5-4e36-9fbd-b9b729f56b09/nike-just-do-it.png",
-    },
-    {
-      id: 1,
-      thumbnail:
-        "https://static.nike.com/a/images/f_auto/dpr_0.8,cs_srgb/w_2537,c_limit/32a8910a-96a5-4e36-9fbd-b9b729f56b09/nike-just-do-it.png",
-    },
-    {
-      id: 1,
-      thumbnail:
-        "https://static.nike.com/a/images/f_auto/dpr_0.8,cs_srgb/w_2537,c_limit/32a8910a-96a5-4e36-9fbd-b9b729f56b09/nike-just-do-it.png",
-    },
-  ];
+  const banner = [Banner3, Banner4, Banner5, Banner6, Banner7];
 
   return (
     <div className="bg-white max-w-[1400px] mx-auto my-4 flex flex-col gap-4">
@@ -65,7 +49,31 @@ const Home = () => {
         </div>
       </div>
       <IconsContainer />
+      <div className="w-full grid grid-cols-12 gap-4">
+        <div className="col-span-8">
+          <Carousel arrows autoplay={true}>
+            {banner.map((img, index) => (
+              <div key={index} className="w-fit">
+                <img src={img} />
+              </div>
+            ))}
+          </Carousel>
+        </div>
+        <div className="col-span-4">
+          <img src={Banner9} className="h-[588.38px]" />
+        </div>
+      </div>
+
+      <div className="my-4 w-full">
+        <img src={Banner2} className="w-full" />
+      </div>
       <NewRelease />
+      <div className="my-4 w-full">
+        <img src={Banner1} />
+      </div>
+      <ProductsByObject objectId={1} />
+      <ProductsByObject objectId={2} />
+      <ProductsByObject objectId={3} />
     </div>
   );
 };

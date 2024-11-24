@@ -49,6 +49,7 @@ const IconsContainer = () => {
               src={getImageByCloudinary(icon.thumbnail)}
               alt=""
               className="w-full h-full"
+              loading="lazy"
             />
           </div>
         ))}

@@ -1,3 +1,3 @@
-export const getImageByCloudinary = (publicId) => {
-  return `https://res.cloudinary.com/dr0xghsna/image/upload/v1732366460/${publicId}`;
+export const getImageByCloudinary = (publicId, width = 350, height = 400) => {
+  return `https://res.cloudinary.com/dr0xghsna/image/upload/w_${width},h_${height}/${publicId}`;
 };
