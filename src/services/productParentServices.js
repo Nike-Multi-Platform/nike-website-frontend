@@ -43,3 +43,20 @@ export const getColorDetail = async (productId) => {
     console.error(error);
   }
 };
+
+export const getColorReviews = async (
+  productId,
+  page,
+  limit,
+  sortBy,
+  rating
+) => {
+  try {
+    const response = await axios.get(
+      `${url}/product-reviews/${productId}?page=${page}&limit=${limit}&sortBy=${sortBy}&rating=${rating}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

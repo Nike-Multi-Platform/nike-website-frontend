@@ -1,26 +1,38 @@
 import React, { useEffect, useReducer } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   getColorDetail,
+  getColorReviews,
   getDetailProduct,
 } from "../../services/productParentServices";
 
 import { getImageByCloudinary } from "../../helpers/getImageByCloudinary";
-import { Image, Result, Spin } from "antd";
-
+import { Button, Image, List, Result, Select, Spin } from "antd";
+import { FaRulerHorizontal } from "react-icons/fa6";
+import { FaRegHeart } from "react-icons/fa";
+import ReviewItemCard from "../../components/reviews/reviewItemCard";
 const DetailProduct = () => {
   const product_parent_id = useParams().product_parent_id;
+  const navigate = useNavigate();
   const [localState, setLocalState] = useReducer(
     (state, action) => {
       return { ...state, [action.type]: action.payload };
     },
     {
       loading: false,
+      reviews: {
+        data: [],
+        totalPages: 0,
+      },
       product: null,
       currentColor: null,
       currentSize: null,
       currentThumbnail: null,
       salePercent: 0,
+      filter: {
+        rating: 6,
+        sortBy: "newest",
+      },
     }
   );
 
@@ -48,32 +60,32 @@ const DetailProduct = () => {
       fetchProduct();
     }
   }, [product_parent_id]);
-  useEffect(() => {
-    const fetchColorDetail = async (productId) => {
+  const fetchColorDetail = async (productId) => {
+    setLocalState({
+      type: "loading",
+      payload: true,
+    });
+    try {
+      const res = await getColorDetail(productId);
+      setLocalState({
+        type: "currentColor",
+        payload: res.data,
+      });
+      const firstThumbnail = res.data.productImageDtos[0];
+      setLocalState({
+        type: "currentThumbnail",
+        payload: firstThumbnail,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
       setLocalState({
         type: "loading",
-        payload: true,
+        payload: false,
       });
-      try {
-        const res = await getColorDetail(productId);
-        setLocalState({
-          type: "currentColor",
-          payload: res.data,
-        });
-        const firstThumbnail = res.data.productImageDtos[0];
-        setLocalState({
-          type: "currentThumbnail",
-          payload: firstThumbnail,
-        });
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLocalState({
-          type: "loading",
-          payload: false,
-        });
-      }
-    };
+    }
+  };
+  useEffect(() => {
     if (localState.product) {
       const firstInStock = localState.product.products?.find(
         (x) => x.stock > 0
@@ -124,16 +136,52 @@ const DetailProduct = () => {
     }
   }, [localState.product, localState.currentColor]);
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      setLocalState({
+        type: "loading",
+        payload: true,
+      });
+      try {
+        const res = await getColorReviews(
+          localState.currentColor?.productId,
+          1,
+          10,
+          localState.filter.sortBy,
+          localState.filter.rating
+        );
+
+        setLocalState({
+          type: "reviews",
+          payload: {
+            data: res.data,
+            totalPages: res.totalPages,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLocalState({
+          type: "loading",
+          payload: false,
+        });
+      }
+    };
+    if (localState.currentColor && localState.filter) {
+      fetchReviews();
+    }
+  }, [localState.currentColor, localState.filter]);
+
   return (
     <>
-      {localState.loading && (
+      {/* {localState.loading && (
         <div className="max-w-[1400px] h-[400px] mx-auto items-center justify-center">
           <Spin />
         </div>
-      )}
+      )} */}
       {localState.product && (
         <div className="max-w-[1100px] mx-auto grid grid-cols-12 my-10 gap-3">
-          <div className="col-span-7 flex gap-3">
+          <div className="col-span-7 flex gap-3 max-h-[552px]">
             <div className="pl-3 custom-scrollbar max-h-[552px] flex flex-col gap-2">
               {Array.isArray(localState.currentColor?.productImageDtos) &&
                 localState.currentColor?.productImageDtos?.map((img, index) => (
@@ -163,7 +211,7 @@ const DetailProduct = () => {
                 552,
                 552
               )}
-              className="rounded-md"
+              className="rounded-md max-h-[552px]"
               loading="lazy"
             />
           </div>
@@ -219,14 +267,150 @@ const DetailProduct = () => {
                 </>
               )}
             </div>
-            <div className="flex overflow-auto max-h-[180px]">
-              {localState.product?.products?.map((img, key) => (
-                <img
-                  src={getImageByCloudinary(img.productImage, 70, 70)}
-                  loading="lazy"
-                />
-              ))}
+            <div className="gap-2 flex flex-wrap overflow-y-auto max-h-[160px] mt-7">
+              {Array.isArray(localState.product?.products) &&
+                localState.product?.products?.length > 0 &&
+                localState.product?.products?.map((img, key) => (
+                  <img
+                    src={getImageByCloudinary(img.productImage, 70, 70)}
+                    loading="lazy"
+                    key={key}
+                    className={`${
+                      img?.productId === localState.currentColor?.productId
+                        ? "border-[1px] border-red-500 shadow-lg"
+                        : ""
+                    } cursor-pointer rounded-md`}
+                    alt=""
+                    onClick={() => fetchColorDetail(img.productId)}
+                  />
+                ))}
             </div>
+            <div className="flex flex-col gap-2 mt-3">
+              <div className="flex justify-between text-neutral-700">
+                <span className="font-semibold">Select Size</span>
+                <span className="flex items-center gap-2 cursor-pointer">
+                  <FaRulerHorizontal /> Size Guide
+                </span>
+              </div>
+              <div className="grid grid-cols-12 items-center gap-3">
+                {Array.isArray(localState.currentColor?.productSizeDtos) &&
+                  localState.currentColor?.productSizeDtos?.length > 0 &&
+                  localState.currentColor?.productSizeDtos?.map((size, key) => (
+                    <Button
+                      className={`col-span-3 hover:bg-red-500 hover:text-white hover:border-red-500 font-semibold ${
+                        size.productSizeId ===
+                        localState.currentSize?.productSizeId
+                          ? "bg-red-500 text-white border-red-500"
+                          : ""
+                      } rounded-md`}
+                      key={key}
+                      disabled={size.quantity <= 0}
+                      onClick={() =>
+                        setLocalState({
+                          type: "currentSize",
+                          payload: size,
+                        })
+                      }
+                    >
+                      {size?.sizeDto?.sizeName}
+                    </Button>
+                  ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 mt-4 px-6">
+              <Button className="rounded-full h-12 bg-red-500 border-red-500 text-white hover:opacity-80 font-semibold">
+                Add To Bag
+              </Button>
+              <Button className="rounded-full h-12 font-semibold hover:bg-black hover:text-white hover:border-black">
+                Favourite <FaRegHeart />
+              </Button>
+            </div>
+          </div>
+          <div className="col-span-12 mt-2">
+            <div className="w-full  bg-zinc-100">
+              <div className="font-semibold text-neutral-700 rounded p-4">
+                Description
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 text-neutral-700 border-[1px] p-2 rounded">
+              <span className="whitespace-pre-line font-semibold">
+                {localState.currentColor?.moreInfo}
+              </span>
+              <ul className="list-disc pl-5 font-semibold">
+                {localState.currentColor?.colorShown &&
+                  localState.currentColor?.colorShown !== "" && (
+                    <li>Colour Shown: {localState.currentColor?.colorShown}</li>
+                  )}
+
+                {localState.currentColor?.styleCode &&
+                  localState.currentColor?.styleCode !== "" && (
+                    <li>Style Code: {localState.currentColor?.styleCode}</li>
+                  )}
+                {localState.currentColor?.sizeAndFit &&
+                  localState.currentColor?.sizeAndFit !== "" && (
+                    <li>Size And Fit: {localState.currentColor?.sizeAndFit}</li>
+                  )}
+              </ul>
+            </div>
+          </div>
+          <div className="col-span-12 mt-2">
+            <div className="w-full p-4  bg-red-500 flex justify-between items-center">
+              <div className="font-semibold text-white rounded ">Reviews</div>
+            </div>
+            <div className="mt-2 mb-2">
+              <div className="flex gap-2 items-center">
+                <Select
+                  options={[
+                    { label: "All Ratings", value: 6 },
+                    { label: "5 Stars", value: 5 },
+                    { label: "4 Stars", value: 4 },
+                    { label: "3 Stars", value: 3 },
+                    { label: "2 Stars", value: 2 },
+                    { label: "1 Star", value: 1 },
+                  ]}
+                  defaultValue={localState.filter.rating}
+                  size="large"
+                  onChange={(value) =>
+                    setLocalState({
+                      type: "filter",
+                      payload: {
+                        ...localState.filter,
+                        rating: value,
+                      },
+                    })
+                  }
+                />
+                <Select
+                  options={[
+                    { label: "Newest", value: "newest" },
+                    { label: "Oldest", value: "oldest" },
+                    { label: "Highest Rating", value: "highest-rating" },
+                    { label: "Lowest Rating", value: "lowest-rating" },
+                  ]}
+                  defaultValue={localState.filter.sortBy}
+                  size="large"
+                  onChange={(value) =>
+                    setLocalState({
+                      type: "filter",
+                      payload: {
+                        ...localState.filter,
+                        sortBy: value,
+                      },
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <List
+              dataSource={localState.reviews?.data}
+              loading={localState.loading}
+              renderItem={(item, key) => (
+                <List.Item key={key}>
+                  <ReviewItemCard review={item} />
+                </List.Item>
+              )}
+            />
           </div>
         </div>
       )}
