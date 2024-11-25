@@ -2,6 +2,7 @@ import React, { memo, useMemo } from "react";
 import { isNewRelease } from "../../helpers/isNewRelease";
 import { Image } from "antd";
 import { getImageByCloudinary } from "../../helpers/getImageByCloudinary";
+import { useNavigate } from "react-router-dom";
 
 const ProductCard = (props) => {
   const { product, key } = props;
@@ -20,9 +21,11 @@ const ProductCard = (props) => {
   }, [salePrice, product.productPrice]);
   const newRelease = isNewRelease(product.createdAt);
   const isStock = product?.quantityInStock > 0;
+  const navigate = useNavigate();
   return (
     <div
       className="col-span-3 flex flex-col hover:shadow-lg rounded-md cursor-pointer"
+      onClick={() => navigate(`/detail-product/${product.productParentId}`)}
       key={key}
     >
       <div className="relative">

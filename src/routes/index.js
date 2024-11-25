@@ -4,6 +4,8 @@ import AuthLayout from "../layout";
 import { createBrowserRouter } from "react-router-dom";
 import { Spin } from "antd";
 import CategoriesProduct from "../CategoriesProduct";
+
+const DetailProduct = lazy(() => import("../pages/products/DetailProduct"));
 const Home = lazy(() => import("../pages/Home"));
 const Login = lazy(() => import("../pages/authentication/Login"));
 const Register = lazy(() => import("../pages/authentication/Register"));
@@ -32,7 +34,15 @@ const router = createBrowserRouter([
         path: "/categories",
         element: (
           <AuthLayout>
-            <CategoriesProduct />
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <CategoriesProduct />
+            </Suspense>
           </AuthLayout>
         ),
       },
@@ -40,18 +50,50 @@ const router = createBrowserRouter([
         path: "/login",
         element: (
           <AuthLayout>
-            <Login />
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <Login />
+            </Suspense>
           </AuthLayout>
-        )
+        ),
       },
       {
         path: "/register",
         element: (
           <AuthLayout>
-            <Register />
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <Register />
+            </Suspense>
           </AuthLayout>
-        )
-      }
+        ),
+      },
+      {
+        path: "/detail-product/:product_parent_id",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <DetailProduct />
+            </Suspense>
+          </AuthLayout>
+        ),
+      },
       //Add more routes here
     ],
   },
