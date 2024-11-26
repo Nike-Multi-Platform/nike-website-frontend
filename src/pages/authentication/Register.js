@@ -1,11 +1,16 @@
 import React, { useEffect, useReducer } from "react";
 import { motion } from "framer-motion";
-import { Button, DatePicker, Divider, Input, message, Select } from "antd";
+import { Button, Divider, Input, message, Select } from "antd";
 import { FcGoogle } from "react-icons/fc";
-import bgAbstract from "../../../src/assets/engaged.png";
+import bgAbstract from "../../../src/assets/Designer.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { checkNumberPhone } from "../../helpers/formatPhoneNumber";
+import { RegisterUser } from "../../services/userService";
+import { a } from "framer-motion/client";
+message.config({
+  top: 150
+});
 
 const items = [
   {
@@ -57,21 +62,19 @@ const Register = () => {
       isVisbleResetModal: false,
       loading: false,
       data: {
-        username: "",
-        fullname: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phoneNumber: "",
-        dob: "",
         gender: "",
         password: "",
         retypePassword: "",
       },
       error: {
-        username: "",
-        fullname: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phoneNumber: "",
-        dob: "",
         gender: "",
         password: "",
         retypePassword: "",
@@ -96,32 +99,29 @@ const Register = () => {
 
   useEffect(() => {
     if (!hasStartedTyping) return;
-    //Username
-    if (data.username === "") {
+    //FirstName
+    if (data.firstName === "") {
       dispatch({
         type: "SET_ERROR",
-        payload: {
-          name: "username",
-          value: "Tên đăng nhập không được để trống",
-        },
+        payload: { name: "firstName", value: "Tên không được để trống" },
       });
     } else {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "username", value: "" },
+        payload: { name: "firstName", value: "" },
       });
     }
 
-    //Fullname
-    if (data.fullname === "") {
+    //LastName
+    if (data.lastName === "") {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "fullname", value: "Họ và tên không được để trống" },
+        payload: { name: "lastName", value: "Họ không được để trống" },
       });
     } else {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "fullname", value: "" },
+        payload: { name: "lastName", value: "" },
       });
     }
 
@@ -164,40 +164,6 @@ const Register = () => {
       dispatch({
         type: "SET_ERROR",
         payload: { name: "phoneNumber", value: "" },
-      });
-    }
-
-    //DOB
-    if (data.dob === "") {
-      dispatch({
-        type: "SET_ERROR",
-        payload: { name: "dob", value: "Ngày sinh không được để trống" },
-      });
-    }
-    const dob = new Date(data.dob);
-
-    const today = new Date();
-    const age = today.getFullYear() - dob.getFullYear();
-    const monthDiff = today.getMonth() - dob.getMonth();
-    const dayDiff = today.getDate() - dob.getDate();
-
-    if (dob > today) {
-      dispatch({
-        type: "SET_ERROR",
-        payload: { name: "dob", value: "Ngày sinh không hợp lệ" },
-      });
-    } else if (
-      age < 16 ||
-      (age === 16 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
-    ) {
-      dispatch({
-        type: "SET_ERROR",
-        payload: { name: "dob", value: "Bạn phải đủ 16 tuổi" },
-      });
-    } else {
-      dispatch({
-        type: "SET_ERROR",
-        payload: { name: "dob", value: "" },
       });
     }
 
@@ -261,6 +227,103 @@ const Register = () => {
   }, [data]);
   document.title = "Đăng Ký";
 
+
+  const handleOnSubmit = async () => {
+    const errors = {};
+
+    // Validate firstName
+    if (!data.firstName) {
+      errors.firstName = "Tên không được để trống";
+    }
+
+    // Validate lastName
+    if (!data.lastName) {
+      errors.lastName = "Họ không được để trống";
+    }
+
+    // Validate email
+    if (!data.email) {
+      errors.email = "Email không được để trống";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      errors.email = "Email không hợp lệ";
+    }
+
+    // Validate phoneNumber
+    const checkPhoneNumber = checkNumberPhone(data.phoneNumber);
+    if (!data.phoneNumber) {
+      errors.phoneNumber = "Số điện thoại không được để trống";
+    } else if (data.phoneNumber.length !== 10 || checkPhoneNumber !== "") {
+      errors.phoneNumber = checkPhoneNumber || "Số điện thoại không hợp lệ";
+    }
+
+    // Validate gender
+    if (!data.gender) {
+      errors.gender = "Giới tính không được để trống";
+    }
+
+    // Validate password
+    if (!data.password) {
+      errors.password = "Mật khẩu không được để trống";
+    } else if (data.password.length < 6) {
+      errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    }
+
+    // Validate retypePassword
+    if (!data.retypePassword) {
+      errors.retypePassword = "Nhập lại mật khẩu không được để trống";
+    } else if (data.password !== data.retypePassword) {
+      errors.retypePassword = "Mật khẩu không khớp";
+    }
+
+    // Update errors in state
+    Object.keys(errors).forEach((key) => {
+      dispatch({
+        type: "SET_ERROR",
+        payload: { name: key, value: errors[key] },
+      });
+    });
+
+    // Check if there are any errors
+    if (Object.keys(errors).length > 0) {
+      // message.error("Vui lòng điền đầy đủ thông tin");
+      return;
+    }
+
+    // Proceed with registration
+    dispatch({
+      type: "SET_LOADING",
+      payload: true,
+    });
+
+    const payload = {
+      userEmail: data.email,
+      password: data.password,
+      userGender: data.gender,
+      userPhoneNumber: data.phoneNumber,
+      userFirstName: data.firstName,
+      userLastName: data.lastName,
+    };
+
+    try {
+      const res = await RegisterUser(payload);
+      if (res?.statusCode === 200) {
+        message.success(res?.message);
+        navigate("/login");
+      } else {
+        message.error(res?.message || "Đã xảy ra lỗi khi đăng ký");
+      }
+    } catch (error) {
+      message.error("Đã xảy ra lỗi khi đăng ký");
+      console.error("Error when registering:", error);
+    } finally {
+      dispatch({
+        type: "SET_LOADING",
+        payload: false,
+      });
+    }
+  };
+
+
   return (
     <div className="w-full bg-cover bg-background-Shop-2 relative flex items-center justify-center ">
       <div className="w-full h-full backdrop-blur-md ">
@@ -279,42 +342,41 @@ const Register = () => {
             </div>
             <div className="w-[450px] h-full bg-white rounded px-7 py-11 ">
               <form
-                // onSubmit={handleSignUp} 
                 className=" flex flex-col ">
                 <h1 className="font-[500] text-primary text-2xl text-center">
                   Đăng Ký
                 </h1>
                 <div className=" h-[60.45px]">
                   <Input
-                    tabIndex={1}
-                    className="border py-2 px-3 w-full"
-                    status={error?.username ? "error" : ""}
-                    name="username"
-                    placeholder="Tên Đăng Nhập"
-                    type="text"
-                    onChange={onTextChanged}
-                  />
-                  <span className="text-sm text-red-700">
-                    {error?.username ? error?.username : ""}
-                  </span>
-                </div>
-                <div className=" h-[60.45px]">
-                  <Input
                     tabIndex={2}
                     className="border py-2 px-3 w-full"
-                    name="fullname"
-                    status={error?.fullname ? "error" : ""}
-                    placeholder={"Họ và Tên"}
+                    name="firstName"
+                    status={error?.firstName ? "error" : ""}
+                    placeholder={"Tên"}
                     type="text"
                     onChange={onTextChanged}
                   />
                   <span className="text-sm text-red-700">
-                    {error?.fullname ? error?.fullname : ""}
+                    {error?.firstName ? error?.firstName : ""}
                   </span>
                 </div>
                 <div className=" h-[60.45px]">
                   <Input
                     tabIndex={3}
+                    className="border py-2 px-3 w-full"
+                    name="lastName"
+                    status={error?.lastName ? "error" : ""}
+                    placeholder={"Họ"}
+                    type="text"
+                    onChange={onTextChanged}
+                  />
+                  <span className="text-sm text-red-700">
+                    {error?.lastName ? error?.lastName : ""}
+                  </span>
+                </div>
+                <div className=" h-[60.45px]">
+                  <Input
+                    tabIndex={4}
                     className="border py-2 px-3 w-full"
                     name="email"
                     status={error?.email ? "error" : ""}
@@ -328,7 +390,7 @@ const Register = () => {
                 </div>
                 <div className=" h-[60.45px]">
                   <Input
-                    tabIndex={4}
+                    tabIndex={5}
                     className="border py-2 px-3 w-full"
                     name="phoneNumber"
                     status={error?.phoneNumber ? "error" : ""}
@@ -343,57 +405,31 @@ const Register = () => {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-12 gap-4 h-[60.45px]">
-                  <div className="col-span-8 flex flex-col">
-                    <DatePicker
-                      format="YYYY-MM-DD"
-                      tabIndex={6}
-                      status={error?.dob ? "error" : ""}
-                      placeholder={"Ngày Sinh"}
-                      onChange={(date, dateString) => {
-                        dispatch({
-                          type: "SET_DATA",
-                          payload: { name: "dob", value: dateString },
-                        });
-                        dispatch({
-                          type: "hasStartedTyping",
-                        });
-                      }}
-                    />
-                    <span className="text-sm text-red-700">
-                      {error?.dob ? error?.dob : ""}
-                    </span>
-                  </div>
-
-                  <Select
-                    className="col-span-4"
-                    placeholder={error?.gender ? error?.gender : "Giới Tính"}
-                    status={error?.gender ? "error" : ""}
-                    style={{ width: 120 }}
-                    options={items}
-                    tabIndex={7}
-                    onChange={(value) => {
-                      dispatch({
-                        type: "SET_DATA",
-                        payload: { name: "gender", value },
-                      });
-                      dispatch({
-                        type: "hasStartedTyping",
-                      });
-                    }}
-                  />
-                </div>
-                <div className=" h-[60.45px]">
+                <Select
+                  className="w-full"
+                  placeholder={error?.gender ? error?.gender : "Giới Tính"}
+                  status={error?.gender ? "error" : ""}
+                  options={items}
+                  tabIndex={6}
+                  onChange={(value) => {
+                    dispatch({
+                      type: "SET_DATA",
+                      payload: { name: "gender", value },
+                    });
+                    dispatch({
+                      type: "hasStartedTyping",
+                    });
+                  }}
+                />
+                <div className=" h-[60.45px] mt-4">
                   <Input
-                    tabIndex={8}
+                    tabIndex={7}
                     className="border py-2 px-3 w-full"
                     name="password"
                     status={error?.password ? "error" : ""}
                     onChange={onTextChanged}
                     placeholder={"Mật khẩu"}
                     type="password"
-                  // type={passwordInputType}
-                  // onChange={handleOnChange}
                   />
                   <span className="text-sm text-red-700">
                     {error?.password ? error?.password : ""}
@@ -408,8 +444,6 @@ const Register = () => {
                     status={error?.retypePassword ? "error" : ""}
                     placeholder={"Nhập lại mật khẩu"}
                     type="password"
-                  // type={passwordInputType}
-                  // onChange={handleOnChange}
                   />
                   <span className="text-sm text-red-700">
                     {error?.retypePassword ? error?.retypePassword : ""}
@@ -417,10 +451,9 @@ const Register = () => {
                 </div>
 
                 <Button
-                  className="bg-custom-gradient text-white hover:opacity-90 mt-4"
-                  // onSubmit={handleOnSubmit}
-                  tabIndex={10}
-                  htmlType="submit"
+                  className="bg-custom-gradient hover:opacity-90 mt-4"
+                  onClick={() => handleOnSubmit()}
+                  tabIndex={9}
                   loading={loading}
                 >
                   ĐĂNG KÝ
@@ -428,7 +461,7 @@ const Register = () => {
               </form>
               <div
                 className="flex justify-end mt-4 text-sm text-[#05a]"
-                tabIndex={11}
+                tabIndex={10}
               >
                 <span
                   className="cursor-pointer"
@@ -445,7 +478,7 @@ const Register = () => {
               <div className="flex justify-center">
                 <button
                   className="border rounded p-2 w-[165px]"
-                  // onClick={handleGoogleSignIn}
+                // onClick={handleGoogleSignIn}
                 >
                   <span className="flex gap-1 justify-center items-center">
                     <FcGoogle size={23} /> Google
@@ -454,7 +487,7 @@ const Register = () => {
               </div>
               <div className="flex justify-center items-center gap-1 mt-8 mb-4 text-sm">
                 <span className="text-slate-400 ">Đã có tài khoản?</span>
-                <a href="/login" className="text-primary" tabIndex={12}>
+                <a href="/login" className="text-primary" tabIndex={11}>
                   Đăng nhập
                 </a>
               </div>

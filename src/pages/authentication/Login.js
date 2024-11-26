@@ -1,10 +1,19 @@
-import React, { useEffect, useReducer } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { motion } from "framer-motion";
-import { Button, Divider, Input } from 'antd';
+import { Button, Divider, Input, message } from 'antd';
 import { FcGoogle } from 'react-icons/fc';
-import bgAbstract from "../../../src/assets/engaged.png";
+import bgAbstract from "../../../src/assets/Designer.png";
 import { IoMdEye } from 'react-icons/io';
 import { RiEyeCloseLine } from 'react-icons/ri';
+import { LoginGoogle, LoginWithEmailPassword } from '../../services/userService';
+import { em } from 'framer-motion/client';
+import { useNavigate } from 'react-router-dom';
+import { signInWithGoogle } from '../../firebase/AuthenticationFirebase';
+import { getAuth, unlink } from 'firebase/auth';
+import toast from 'react-hot-toast';
+message.config({
+    top: 150
+});
 
 const Login = () => {
     const [loginState, setLoginState] = useReducer(
@@ -19,8 +28,12 @@ const Login = () => {
                 password: "",
             },
             isVisbleResetModal: false,
+            loading: false,
         }
     );
+
+
+    const navigate = useNavigate();
 
     const passwordInputType = loginState.hidePassword ? "text" : "password";
 
@@ -41,12 +54,97 @@ const Login = () => {
                 [name]: value,
             },
         });
-
     };
+
+    const handleLoginEmailPassword = async () => {
+        const errors = {};
+
+        if (!loginState.data?.identifier || loginState.data.identifier.trim() === "") {
+            errors.identifier = "Vui lòng nhập email hoặc tên đăng nhập";
+        }
+
+        if (!loginState.data?.password || loginState.data.password.trim() === "") {
+            errors.password = "Vui lòng nhập mật khẩu";
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setLoginState({ type: "error", payload: errors });
+            return;
+        }
+
+        setLoginState({ type: "loading", payload: true });
+
+        try {
+            const payload = {
+                email: loginState.data?.identifier,
+                password: loginState.data?.password,
+            };
+            const response = await LoginWithEmailPassword(payload);
+
+            if (response?.statusCode === 200) {
+                message.success(response?.message);
+                console.log("Login success", response.data);
+                localStorage.setItem("token", response?.data);
+                navigate("/");
+            } else {
+                const errorMessage = response?.message;
+                message.error(errorMessage);
+                console.log("Error when login", errorMessage);
+            }
+        } catch (error) {
+            message.error("Đã xảy ra lỗi khi đăng nhập");
+            console.log("Error when login", error);
+        } finally {
+            setLoginState({ type: "loading", payload: false });
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        try {
+            const resUser = await signInWithGoogle();
+            const auth = getAuth();
+            const currentUser = auth.currentUser;
+
+            for (let provider of resUser.providerData) {
+                if (provider.email !== resUser.email) {
+                    try {
+                        await unlink(currentUser, provider.providerId);
+                        console.log(`Unlinked provider: ${provider.providerId}`);
+                    } catch (error) {
+                        console.error("Error unlinking provider: ", error);
+                    }
+                }
+            }
+
+            const idToken = await currentUser.getIdToken();
+
+            const payload = { idToken };
+
+            try {
+                const resLoginGoogle = await LoginGoogle(payload);
+                if (resLoginGoogle?.statusCode === 200) {
+                    localStorage.setItem("token", resLoginGoogle?.data);
+                    message.success("Đăng nhập thành công");
+                    console.log("Login success", resLoginGoogle);
+                    navigate("/");
+                } else {
+                    const errorMessage = resLoginGoogle?.message;
+                    message.error(errorMessage);
+                    console.log("Error when login", errorMessage);
+                }
+            } catch (error) {
+                message.error("Đã xảy ra lỗi khi đăng nhập");
+                console.log("Error when login", error);
+            }
+        } catch (error) {
+            console.log("Error:", error);
+            message.error(error?.message || "Đăng nhập thất bại");
+        }
+    };
+
 
     useEffect(() => {
         const errors = {};
-
         // Validate identifier
         if (loginState.data?.identifier === "") {
             errors.identifier = "Vui lòng nhập email hoặc tên đăng nhập";
@@ -58,7 +156,6 @@ const Login = () => {
         }
 
         setLoginState({ type: "error", payload: errors });
-
     }, [loginState.data]);
 
 
@@ -80,7 +177,6 @@ const Login = () => {
                         </div>
                         <div className="w-[400px] h-full bg-white rounded px-7 py-10 ">
                             <form className=" flex flex-col"
-                            //   onSubmit={handleOnSubmit}
                             >
                                 <h1 className="font-[500] text-primary text-2xl text-center mb-7">
                                     Đăng nhập
@@ -135,8 +231,9 @@ const Login = () => {
 
                                 <Button
                                     className="hover:opacity-90 rounded py-2"
-                                    htmlType="submit"
+                                    onClick={() => handleLoginEmailPassword()}
                                     tabIndex={3}
+                                    loading={loginState.loading}
                                 >
                                     ĐĂNG NHẬP
                                 </Button>
@@ -158,7 +255,7 @@ const Login = () => {
                             <div className="flex justify-center">
                                 <button
                                     className="border rounded p-2 w-[165px]"
-                                //   onClick={handleGoogleSignIn}
+                                    onClick={() => handleGoogleSignIn()}
                                 >
                                     <span className="flex gap-1 justify-center items-center">
                                         <FcGoogle size={23} /> Google
