@@ -23,3 +23,40 @@ export const getProductsByObjectId = async (objectId, page, limit) => {
     console.error(error);
   }
 };
+
+export const getDetailProduct = async (productParentId) => {
+  try {
+    const response = await axios.get(
+      `${url}/product-parent-detail/${productParentId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getColorDetail = async (productId) => {
+  try {
+    const response = await axios.get(`${url}/product-detail/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getColorReviews = async (
+  productId,
+  page,
+  limit,
+  sortBy,
+  rating
+) => {
+  try {
+    const response = await axios.get(
+      `${url}/product-reviews/${productId}?page=${page}&limit=${limit}&sortBy=${sortBy}&rating=${rating}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

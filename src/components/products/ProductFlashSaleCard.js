@@ -1,6 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { getImageByCloudinary } from "../../helpers/getImageByCloudinary";
 import { Image } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const ProductFlashSaleCard = (props) => {
   const { product, status, key } = props;
@@ -17,8 +18,13 @@ const ProductFlashSaleCard = (props) => {
       ((product.productPrice - salePrice) / product.productPrice) * 100
     );
   }, [salePrice, product.productPrice]);
+  const navigate = useNavigate();
   return (
-    <div className="w-[340px] flex flex-col gap-2 rounded-md" key={key}>
+    <div
+      className="w-[340px] flex flex-col gap-2 rounded-md hover:shadow-lg"
+      onClick={() => navigate(`/detail-product/${product.productParentId}`)}
+      key={key}
+    >
       <div className="relative">
         <Image
           src={getImageByCloudinary(product.thumbnail, 350, 350)}
