@@ -38,7 +38,7 @@ const IconsContainer = () => {
         rows={1}
         slidesToShow={4}
         className={`container-carousel ${
-          localState.icons.length < 4 ? "not-enough-slide" : ""
+          localState.icons?.length < 4 ? "not-enough-slide" : ""
         }`}
         infinite={false}
         dots={false}

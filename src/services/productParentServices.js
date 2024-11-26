@@ -60,3 +60,14 @@ export const getColorReviews = async (
     console.error(error);
   }
 };
+
+export const getRecommendProducts = async (userId, limit) => {
+  try {
+    const res = await axios.get(
+      `${url}/recommendation?userId=${userId}&limit=${limit}`
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

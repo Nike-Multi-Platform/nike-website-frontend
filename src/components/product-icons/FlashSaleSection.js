@@ -109,7 +109,7 @@ const FlashSaleSection = () => {
               rows={1}
               slidesToShow={4}
               className={`container-carousel ${
-                localState.flashSales?.products.length < 4
+                localState.flashSales?.products?.length < 4
                   ? "not-enough-slide"
                   : ""
               }`}

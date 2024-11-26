@@ -25,7 +25,10 @@ const ProductCard = (props) => {
   return (
     <div
       className="col-span-3 flex flex-col hover:shadow-lg rounded-md cursor-pointer"
-      onClick={() => navigate(`/detail-product/${product.productParentId}`)}
+      onClick={
+        () => navigate(`/detail-product/${product.productParentId}`)
+        // (window.location.href = `/detail-product/${product.productParentId}`)
+      }
       key={key}
     >
       <div className="relative">

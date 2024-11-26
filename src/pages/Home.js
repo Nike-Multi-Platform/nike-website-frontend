@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, { lazy, useEffect } from "react";
 import Intro from "../assets/intro.mp4";
 import { Button, Carousel } from "antd";
 import Banner1 from "../assets/banner1.png";
@@ -13,6 +13,7 @@ import Banner9 from "../assets/banner9.gif";
 import Banner10 from "../assets/banner10.gif";
 
 import withSuspense from "../hooks/HOC/withSuspense";
+import { useLocation } from "react-router-dom";
 
 const FlashSaleSection = withSuspense(
   lazy(() => import("../components/product-icons/FlashSaleSection"))
@@ -29,7 +30,12 @@ const NewRelease = withSuspense(
 
 const Home = () => {
   const banner = [Banner3, Banner4, Banner5, Banner6, Banner7];
-
+  const location = useLocation();
+  useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100); // Delay 100ms để đảm bảo trang đã tải xong
+  }, [location]);
   return (
     <div className="bg-white max-w-[1400px] mx-auto my-4 flex flex-col gap-10">
       <div className="w-full my-4">

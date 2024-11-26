@@ -21,7 +21,7 @@ const ProductFlashSaleCard = (props) => {
   const navigate = useNavigate();
   return (
     <div
-      className="w-[340px] flex flex-col gap-2 rounded-md hover:shadow-lg"
+      className="w-[340px] flex flex-col gap-2 rounded-md hover:shadow-lg cursor-pointer"
       onClick={() => navigate(`/detail-product/${product.productParentId}`)}
       key={key}
     >

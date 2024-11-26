@@ -4,6 +4,10 @@
 .App {
   text-align: center;
 }
+html,
+body {
+  scroll-behavior: smooth; /* Thử loại bỏ hoặc thay đổi nếu cần */
+}
 
 .App-logo {
   height: 40vmin;
