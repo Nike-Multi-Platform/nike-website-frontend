@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { checkNumberPhone } from "../../helpers/formatPhoneNumber";
 import { RegisterUser } from "../../services/userService";
 import { a } from "framer-motion/client";
+import ModalForgotPassword from "../../components/user/ModalForgotPassword";
 message.config({
   top: 150
 });
@@ -344,7 +345,7 @@ const Register = () => {
               <form
                 className=" flex flex-col ">
                 <h1 className="font-[500] text-primary text-2xl text-center">
-                  Đăng Ký
+                  Sign Up
                 </h1>
                 <div className=" h-[60.45px]">
                   <Input
@@ -352,7 +353,7 @@ const Register = () => {
                     className="border py-2 px-3 w-full"
                     name="firstName"
                     status={error?.firstName ? "error" : ""}
-                    placeholder={"Tên"}
+                    placeholder={"First Name"}
                     type="text"
                     onChange={onTextChanged}
                   />
@@ -366,7 +367,7 @@ const Register = () => {
                     className="border py-2 px-3 w-full"
                     name="lastName"
                     status={error?.lastName ? "error" : ""}
-                    placeholder={"Họ"}
+                    placeholder={"Last Name"}
                     type="text"
                     onChange={onTextChanged}
                   />
@@ -395,7 +396,7 @@ const Register = () => {
                     name="phoneNumber"
                     status={error?.phoneNumber ? "error" : ""}
                     placeholder={
-                      error?.phoneNumber ? error?.phoneNumber : "Số Điện Thoại"
+                      error?.phoneNumber ? error?.phoneNumber : "Phone Number"
                     }
                     type="tel"
                     onChange={onTextChanged}
@@ -428,7 +429,7 @@ const Register = () => {
                     name="password"
                     status={error?.password ? "error" : ""}
                     onChange={onTextChanged}
-                    placeholder={"Mật khẩu"}
+                    placeholder={"Password"}
                     type="password"
                   />
                   <span className="text-sm text-red-700">
@@ -442,7 +443,7 @@ const Register = () => {
                     name="retypePassword"
                     onChange={onTextChanged}
                     status={error?.retypePassword ? "error" : ""}
-                    placeholder={"Nhập lại mật khẩu"}
+                    placeholder={"Retype Password"}
                     type="password"
                   />
                   <span className="text-sm text-red-700">
@@ -456,7 +457,7 @@ const Register = () => {
                   tabIndex={9}
                   loading={loading}
                 >
-                  ĐĂNG KÝ
+                  Sign Up
                 </Button>
               </form>
               <div
@@ -469,11 +470,11 @@ const Register = () => {
                     dispatch({ type: "SET_isVisbleResetModal", payload: true })
                   }
                 >
-                  Quên mật khẩu
+                  Forgot password?
                 </span>
               </div>
               <Divider>
-                <span className="text-slate-400 text-xs">HOẶC</span>
+                <span className="text-slate-400 text-xs">OR</span>
               </Divider>
               <div className="flex justify-center">
                 <button
@@ -486,14 +487,20 @@ const Register = () => {
                 </button>
               </div>
               <div className="flex justify-center items-center gap-1 mt-8 mb-4 text-sm">
-                <span className="text-slate-400 ">Đã có tài khoản?</span>
+                <span className="text-slate-400 ">Already have an account?</span>
                 <a href="/login" className="text-primary" tabIndex={11}>
-                  Đăng nhập
+                  Sign In
                 </a>
               </div>
             </div>
           </section>
         </motion.div>
+        <ModalForgotPassword
+          isVisbleResetModal={isVisbleResetModal}
+          onClosed={() =>
+            dispatch({ type: "SET_isVisbleResetModal", payload: false })
+          }
+        />
       </div>
     </div>
   );
