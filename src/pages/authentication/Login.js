@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithGoogle } from '../../firebase/AuthenticationFirebase';
 import { getAuth, unlink } from 'firebase/auth';
 import toast from 'react-hot-toast';
+import ModalForgotPassword from '../../components/user/ModalForgotPassword';
 message.config({
     top: 150
 });
@@ -179,7 +180,7 @@ const Login = () => {
                             <form className=" flex flex-col"
                             >
                                 <h1 className="font-[500] text-primary text-2xl text-center mb-7">
-                                    Đăng nhập
+                                    Sign in
                                 </h1>
                                 <div className="flex flex-col h-[74px]">
                                     <Input
@@ -187,7 +188,7 @@ const Login = () => {
                                         className="border py-2 px-3 w-full"
                                         name="identifier"
                                         status={loginState.error?.identifier ? "error" : ""}
-                                        placeholder="Email/Tên đăng nhập"
+                                        placeholder="Email / Username"
                                         onChange={handleOnChange}
                                         type="text"
                                     />
@@ -203,7 +204,7 @@ const Login = () => {
                                             className="border py-2 px-3 w-full"
                                             name="password"
                                             status={loginState.error?.password ? "error" : ""}
-                                            placeholder="Mật khẩu"
+                                            placeholder="password"
                                             type={passwordInputType}
                                             onChange={handleOnChange}
                                         />
@@ -235,7 +236,7 @@ const Login = () => {
                                     tabIndex={3}
                                     loading={loginState.loading}
                                 >
-                                    ĐĂNG NHẬP
+                                    SIGN IN
                                 </Button>
                             </form>
                             <div
@@ -244,13 +245,13 @@ const Login = () => {
                             >
                                 <span
                                     className="cursor-pointer"
-                                //   onClick={() => setIsVisbleResetModal(true)}
+                                  onClick={() => setLoginState({ type: "isVisbleResetModal", payload: true })}
                                 >
-                                    Quên mật khẩu
+                                    Forgot password?
                                 </span>
                             </div>
                             <Divider>
-                                <span className="text-slate-400 text-xs">HOẶC</span>
+                                <span className="text-slate-400 text-xs">OR</span>
                             </Divider>
                             <div className="flex justify-center">
                                 <button
@@ -263,14 +264,15 @@ const Login = () => {
                                 </button>
                             </div>
                             <div className="flex justify-center items-center gap-1 mt-8 mb-4 text-sm">
-                                <span className="text-slate-400 ">Bạn mới biết đến Hamans?</span>
+                                <span className="text-slate-400 ">You do not have an account?</span>
                                 <a href="/register" className="text-primary" tabIndex={5}>
-                                    Đăng ký
+                                    Sign up
                                 </a>
                             </div>
                         </div>
                     </section>
                 </motion.div>
+                <ModalForgotPassword isVisbleResetModal={loginState.isVisbleResetModal} onClosed={() => setLoginState({ type: "isVisbleResetModal", payload: false })} />
             </div>
         </div>
     )
