@@ -30,10 +30,10 @@ export const checkNumberPhone = (phoneNumber) => {
             return "";
         } else {
             // Invalid phone number
-            return "Số điện thoại không hợp lệ";
+            return "Phone number is invalid";
         }
     } else {
         // Invalid phone number length
-        return "Yêu cầu nhập đúng 10 số";
+        return "Phone number has to be 10 digits";
     }
 };
