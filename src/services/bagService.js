@@ -4,71 +4,72 @@ const url = `${process.env.REACT_APP_BACKEND_URL}/api/Bag`;
 
 export const addToBag = async (userId, productSizeId, quantity) => {
   try {
-    const res = await axios.post(`${url}/add-to-bag`, null, {
+    console.log(`Requesting: ${url}/add-to-bag/${userId}`);
+    console.log("Params:", {
+      product_size_id: productSizeId,
+      amount: quantity,
+    });
+
+    const res = await axios.post(`${url}/add-to-bag/${userId}`, null, {
       params: {
-        user_id: userId,
         product_size_id: productSizeId,
         amount: quantity,
       },
     });
+
+    console.log("API Response:", res.data);
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    console.error("API Error:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || error.message);
   }
 };
 
 export const removeFromBag = async (bagId) => {
   try {
-    const res = await axios.post(`${url}/remove-item`, null, {
-      params: {
-        bagId,
-      },
-    });
+    const res = await axios.post(`${url}/remove-item/${bagId}`, null);
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.response?.data?.message || error.message);
   }
 };
 
 export const updateQuantity = async (bag_id, type) => {
   try {
-    const res = await axios.post(`${url}/update-quantity`, null, {
+    const res = await axios.post(`${url}/update-quantity/${bag_id}`, null, {
       params: {
-        bag_id,
         type,
       },
     });
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.response?.data?.message || error.message);
   }
 };
 
 export const updateSelectedBagItem = async (bag_id, isSelected) => {
   try {
-    const res = await axios.post(`${url}/update-select`, null, {
+    const res = await axios.post(`${url}/update-select/${bag_id}`, null, {
       params: {
-        bag_id,
         isSelected,
       },
     });
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.response?.data?.message || error.message);
   }
 };
 
 export const updateSize = async (bag_id, product_size_id) => {
   try {
-    const res = await axios.post(`${url}/update-size`, null, {
+    const res = await axios.post(`${url}/update-size/${bag_id}`, null, {
       params: {
-        bag_id,
         product_size_id,
       },
     });
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.response?.data?.message || error.message);
   }
 };
 
@@ -77,7 +78,7 @@ export const getBag = async (userId) => {
     const res = await axios.get(`${url}/get-bag/${userId}`);
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.response?.data?.message || error.message);
   }
 };
 
@@ -86,6 +87,15 @@ export const getSizes = async (productId) => {
     const res = await axios.get(`${url}/get-sizes/${productId}`);
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.response?.data?.message || error.message);
+  }
+};
+
+export const getTotalItems = async (userId) => {
+  try {
+    const res = await axios.get(`${url}/get-total-items/${userId}`);
+    return res.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || error.message);
   }
 };

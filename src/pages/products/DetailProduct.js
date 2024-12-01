@@ -7,14 +7,30 @@ import {
 } from "../../services/productParentServices";
 
 import { getImageByCloudinary } from "../../helpers/getImageByCloudinary";
-import { Button, Image, List, Pagination, Result, Select, Spin } from "antd";
+import {
+  Button,
+  Image,
+  List,
+  Pagination,
+  Result,
+  Select,
+  Spin,
+  notification,
+} from "antd";
 import { FaRulerHorizontal } from "react-icons/fa6";
 import { FaRegHeart } from "react-icons/fa";
 import ReviewItemCard from "../../components/reviews/reviewItemCard";
 import RecommendationCarousel from "../../components/products/RecommendationCarousel";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { addToBag } from "../../services/bagService";
+import { addToFavorites } from "../../services/favoriteService";
+import { fetchTotalItems } from "../../redux/cartSlice";
 const DetailProduct = () => {
   const product_parent_id = useParams().product_parent_id;
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const [localState, setLocalState] = useReducer(
     (state, action) => {
       return { ...state, [action.type]: action.payload };
@@ -56,7 +72,7 @@ const DetailProduct = () => {
           type: "product",
           payload: res.data,
         });
-        console.log(res.data);
+        // console.log(res.data);
       } catch (error) {
         setLocalState({
           type: "loading",
@@ -179,6 +195,80 @@ const DetailProduct = () => {
       fetchReviews();
     }
   }, [localState.currentColor, localState.filter, localState.page]);
+
+  const addToCart = async () => {
+    if (!user?.userId) {
+      toast.error("Please login to add to bag");
+      navigate("/login");
+      return;
+    }
+    try {
+      const res = await addToBag(
+        user?.userId,
+        localState.currentSize?.productSizeId,
+        1
+      );
+      console.log(res?.data);
+      if (res?.data === true) {
+        notification.success({
+          message: res?.message,
+          showProgress: true,
+          pauseOnHover: false,
+        });
+        dispatch(fetchTotalItems(user?.userId));
+      } else {
+        console.log(res?.message);
+        notification.error({
+          message: res?.message,
+          showProgress: true,
+          pauseOnHover: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      notification.error({
+        message: error?.message,
+        showProgress: true,
+        pauseOnHover: false,
+      });
+    }
+  };
+
+  const addToWishList = async () => {
+    if (!user?.userId) {
+      toast.error("Please login to add to your wish list");
+      navigate("/login");
+      return;
+    }
+    try {
+      const res = await addToFavorites(
+        user?.userId,
+        localState.currentColor?.productId
+      );
+      console.log(res?.data);
+      if (res?.data === true) {
+        notification.success({
+          message: res?.message,
+          showProgress: true,
+          pauseOnHover: false,
+        });
+      } else {
+        console.log(res?.message);
+        notification.error({
+          message: res?.message,
+          showProgress: true,
+          pauseOnHover: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      notification.error({
+        message: error?.message,
+        showProgress: true,
+        pauseOnHover: false,
+      });
+    }
+  };
 
   return (
     <>
@@ -332,12 +422,29 @@ const DetailProduct = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2 mt-4 px-6">
-                <Button className="rounded-full h-12 bg-red-500 border-red-500 text-white hover:opacity-80 font-semibold">
-                  Add To Bag
-                </Button>
-                <Button className="rounded-full h-12 font-semibold hover:bg-black hover:text-white hover:border-black">
-                  Favourite <FaRegHeart />
-                </Button>
+                {localState.currentSize?.quantity > 0 ? (
+                  <>
+                    <Button
+                      className="rounded-full h-12 bg-red-500 border-red-500 text-white hover:opacity-80 font-semibold"
+                      onClick={() => addToCart()}
+                    >
+                      Add To Bag
+                    </Button>
+                    <Button
+                      className="rounded-full h-12 font-semibold hover:bg-black hover:text-white hover:border-black"
+                      onClick={() => addToWishList()}
+                    >
+                      Favourite <FaRegHeart />
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    className="rounded-full h-12 bg-red-500 border-red-500 text-white hover:opacity-80 font-semibold"
+                    disabled={true}
+                  >
+                    Sold Out
+                  </Button>
+                )}
               </div>
             </div>
             <div className="col-span-12 mt-2">

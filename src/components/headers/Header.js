@@ -1,8 +1,8 @@
-import React, { memo, useReducer } from "react";
+import React, { memo, useEffect, useReducer } from "react";
 import HamanLogo from "../../assets/HamansLogo.png";
 import { BsBag, BsHeart, BsSearch } from "react-icons/bs";
 import { BiUser } from "react-icons/bi";
-import { Drawer, Popover } from "antd";
+import { Badge, Drawer, Popover } from "antd";
 import { CiMenuBurger } from "react-icons/ci";
 import DrawerMenuContent from "../categories/DrawerMenuContent";
 import DrawerSearchContent from "../categories/DrawerSearchContent";
@@ -12,6 +12,7 @@ import { IoMdExit } from "react-icons/io";
 import { MdFavoriteBorder } from "react-icons/md";
 import { LogoutUser } from "../../services/userService";
 import { logout } from "../../redux/userSlice";
+import { clearCart, fetchBag, fetchTotalItems } from "../../redux/cartSlice";
 
 const Header = () => {
   const [localState, setLocalState] = useReducer(
@@ -24,7 +25,8 @@ const Header = () => {
     }
   );
   const user = useSelector((state) => state.user);
-  console.log(user);
+  const cart = useSelector((state) => state.cart);
+  console.log("cart", cart);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleOnClick = (type) => {
@@ -73,15 +75,23 @@ const Header = () => {
     } finally {
       localStorage.removeItem("token");
       dispatch(logout());
+      dispatch(clearCart());
     }
   };
+
+  useEffect(() => {
+    if (user?.userId) {
+      dispatch(fetchTotalItems(user?.userId));
+      dispatch(fetchBag(user?.userId));
+    }
+  }, [user?.userId, dispatch]);
   return (
     <>
       <header
         className={`w-full bg-white flex items-center justify-center shadow-md sticky ${
           localState.openMenuDrawer || localState.openSearchDrawer
             ? "z-0"
-            : "z-[99999999]"
+            : "z-50"
         } top-0`}
       >
         <div className="w-[1400px] flex justify-between items-center">
@@ -105,9 +115,15 @@ const Header = () => {
             <div className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer">
               <BsHeart />
             </div>
-            <div className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer">
-              <BsBag />
+            <div
+              className="hover:bg-orange-600 hover:text-white text-black px-5 py-4 hover:rounded-full cursor-pointer group"
+              // onClick={() =>  navigate("/login")}
+            >
+              <Badge count={cart?.totalItems} size="small">
+                <BsBag className="text-xl group-hover:text-white" />
+              </Badge>
             </div>
+
             {!user?.userId && (
               <div
                 className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer"
@@ -120,7 +136,10 @@ const Header = () => {
               <Popover
                 content={
                   <div className="flex flex-col text-base items-start w-[200px]">
-                    <div className="font-semibold text-neutral-500 w-full p-2 cursor-pointer  hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center" onClick={()=>navigate("/account-setting")}>
+                    <div
+                      className="font-semibold text-neutral-500 w-full p-2 cursor-pointer  hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center"
+                      onClick={() => navigate("/account-setting")}
+                    >
                       Profile
                     </div>
                     <div className="font-semibold text-neutral-500 w-full p-2  cursor-pointer hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center">
