@@ -1,13 +1,13 @@
-import React, { useEffect, useReducer } from 'react';
-import { Form, Input, Button, Upload, Spin, Select, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import SettingSidebar from '../../components/profile/SettingSidebar';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { RiImageAddFill } from 'react-icons/ri';
-import { checkNumberPhone } from '../../helpers/formatPhoneNumber';
-import { updateProfile, verifyUser } from '../../services/userService';
-import { logout, setUser } from '../../redux/userSlice';
+import React, { useEffect, useReducer } from "react";
+import { Form, Input, Button, Upload, Spin, Select, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import SettingSidebar from "../../components/profile/SettingSidebar";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { RiImageAddFill } from "react-icons/ri";
+import { checkNumberPhone } from "../../helpers/formatPhoneNumber";
+import { updateProfile, verifyUser } from "../../services/userService";
+import { logout, setUser } from "../../redux/userSlice";
 
 const { Option } = Select;
 message.config({
@@ -47,27 +47,29 @@ const AccountSetting = () => {
       imageUrl: [],
       disable: true,
       error: {
-        imageUrl: '',
-        userUsername: '',
-        userPhoneNumber: '',
-        userAddress: '',
-        userFirstName: '',
-        userLastName: '',
+        imageUrl: "",
+        userUsername: "",
+        userPhoneNumber: "",
+        userAddress: "",
+        userFirstName: "",
+        userLastName: "",
       },
       touched: false,
-      loading: false
+      loading: false,
     }
   );
 
   const uploadProps = {
     fileList: localState.imageUrl.map((url) => ({
       uid: url,
-      name: 'image.png',
-      status: 'done',
+      name: "image.png",
+      status: "done",
       url,
     })),
     onChange: ({ fileList }) => {
-      const updatedUrls = fileList.map((file) => file.url || file.response?.url);
+      const updatedUrls = fileList.map(
+        (file) => file.url || file.response?.url
+      );
       setLocalState({ imageUrl: updatedUrls });
     },
   };
@@ -80,40 +82,40 @@ const AccountSetting = () => {
     const userInfo = { ...localState.user_info, [name]: value };
     // Validate username
     if (!userInfo.userUsername?.trim()) {
-      errors.userUsername = 'Please input your username!';
+      errors.userUsername = "Please input your username!";
     } else {
-      errors.userUsername = '';
+      errors.userUsername = "";
     }
     // Validate phone number
     if (!userInfo.userPhoneNumber?.trim()) {
-      errors.userPhoneNumber = 'Please input your phone number!';
+      errors.userPhoneNumber = "Please input your phone number!";
     } else {
       const phoneError = checkNumberPhone(userInfo.userPhoneNumber);
-      errors.userPhoneNumber = phoneError ? phoneError : '';
+      errors.userPhoneNumber = phoneError ? phoneError : "";
     }
     // Validate address
     if (!userInfo.userAddress?.trim()) {
-      errors.userAddress = 'Please input your address!';
+      errors.userAddress = "Please input your address!";
     } else {
-      errors.userAddress = '';
+      errors.userAddress = "";
     }
     // Validate first name
     if (!userInfo.userFirstName?.trim()) {
-      errors.userFirstName = 'Please input your first name!';
+      errors.userFirstName = "Please input your first name!";
     } else {
-      errors.userFirstName = '';
+      errors.userFirstName = "";
     }
     // Validate last name
     if (!userInfo.userLastName?.trim()) {
-      errors.userLastName = 'Please input your last name!';
+      errors.userLastName = "Please input your last name!";
     } else {
-      errors.userLastName = '';
+      errors.userLastName = "";
     }
 
     setLocalState({ error: errors, user_info: userInfo });
 
     // Check if any error exists
-    return Object.values(errors).some((err) => err !== '');
+    return Object.values(errors).some((err) => err !== "");
   };
 
   const handleUpdateProfile = async () => {
@@ -126,21 +128,20 @@ const AccountSetting = () => {
       UserFirstName: user_info.userFirstName,
       UserLastName: user_info.userLastName,
       UserGender: user_info.userGender,
-      ImageUrl: imageUrl[0] || '',
+      ImageUrl: imageUrl[0] || "",
     };
-    console.log('Payload:', payload);
+    console.log("Payload:", payload);
     setLocalState({ loading: true });
     const response = await updateProfile(payload);
     if (response?.statusCode === 200) {
-      message.success('Profile updated successfully!');
+      message.success("Profile updated successfully!");
       // update user info in redux
       await fetchUserData(token);
     } else {
       message.error(response.message);
     }
     setLocalState({ loading: false });
-  }
-
+  };
 
   const handleOnChange = (name, value) => {
     const hasErrors = validate(name, value);
@@ -151,15 +152,15 @@ const AccountSetting = () => {
   };
 
   const onFinish = (values) => {
-    console.log('Form values:', values);
+    console.log("Form values:", values);
   };
 
   useEffect(() => {
     if (!user || !user.userId) {
       setLocalState({ userLoaded: false });
       const timer = setTimeout(() => {
-        message.error('User not found. Redirecting to home page...');
-        navigate('/');
+        message.error("User not found. Redirecting to home page...");
+        navigate("/");
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -167,7 +168,7 @@ const AccountSetting = () => {
     setLocalState({
       userLoaded: true,
       user_info: user,
-      imageUrl: user.userUrl !== '' ? [user.userUrl] : [],
+      imageUrl: user.userUrl !== "" ? [user.userUrl] : [],
     });
 
     form.setFieldsValue({
@@ -188,9 +189,8 @@ const AccountSetting = () => {
     );
   }
 
-
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row max-w-[1400px] mx-auto">
       <div className="w-1/4">
         <SettingSidebar index="account-details" />
       </div>
@@ -227,56 +227,63 @@ const AccountSetting = () => {
               name="username"
               label="Username"
               help={localState.error.userUsername}
-              validateStatus={localState.error.userUsername ? 'error' : ''}
+              validateStatus={localState.error.userUsername ? "error" : ""}
             >
               <Input
-                onChange={(e) => handleOnChange('userUsername', e.target.value)}
+                disabled={true}
+                onChange={(e) => handleOnChange("userUsername", e.target.value)}
               />
             </Form.Item>
             <Form.Item
               name="phone"
               label="Phone Number"
               help={localState.error.userPhoneNumber}
-              validateStatus={localState.error.userPhoneNumber ? 'error' : ''}
+              validateStatus={localState.error.userPhoneNumber ? "error" : ""}
             >
               <Input
-                onChange={(e) => handleOnChange('userPhoneNumber', e.target.value)}
+                onChange={(e) =>
+                  handleOnChange("userPhoneNumber", e.target.value)
+                }
               />
             </Form.Item>
             <Form.Item
               name="address"
               label="Address"
               help={localState.error.userAddress}
-              validateStatus={localState.error.userAddress ? 'error' : ''}
+              validateStatus={localState.error.userAddress ? "error" : ""}
             >
               <Input
-                onChange={(e) => handleOnChange('userAddress', e.target.value)}
+                onChange={(e) => handleOnChange("userAddress", e.target.value)}
               />
             </Form.Item>
             <Form.Item
               name="firstName"
               label="First Name"
               help={localState.error.userFirstName}
-              validateStatus={localState.error.userFirstName ? 'error' : ''}
+              validateStatus={localState.error.userFirstName ? "error" : ""}
             >
               <Input
-                onChange={(e) => handleOnChange('userFirstName', e.target.value)}
+                onChange={(e) =>
+                  handleOnChange("userFirstName", e.target.value)
+                }
               />
             </Form.Item>
             <Form.Item
               name="lastName"
               label="Last Name"
               help={localState.error.userLastName}
-              validateStatus={localState.error.userLastName ? 'error' : ''}
+              validateStatus={localState.error.userLastName ? "error" : ""}
             >
               <Input
-                onChange={(e) => handleOnChange('userLastName', e.target.value)}
+                onChange={(e) => handleOnChange("userLastName", e.target.value)}
               />
             </Form.Item>
             <Form.Item
               name="gender"
               label="Gender"
-              rules={[{ required: true, message: 'Please select your gender!' }]}
+              rules={[
+                { required: true, message: "Please select your gender!" },
+              ]}
             >
               <Select placeholder="Select Gender">
                 <Option value="male">Male</Option>
@@ -286,7 +293,9 @@ const AccountSetting = () => {
             </Form.Item>
             <Form.Item>
               <Button
-                className={`bg-black text-white font-nikeBody ${localState.disable ? ' bg-gray-500' : ''}`}
+                className={`bg-black text-white font-nikeBody ${
+                  localState.disable ? " bg-gray-500" : ""
+                }`}
                 disabled={localState.disable}
                 loading={localState.loading}
                 onClick={handleUpdateProfile}

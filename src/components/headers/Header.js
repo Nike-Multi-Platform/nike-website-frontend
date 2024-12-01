@@ -6,6 +6,12 @@ import { Drawer, Popover } from "antd";
 import { CiMenuBurger } from "react-icons/ci";
 import DrawerMenuContent from "../categories/DrawerMenuContent";
 import DrawerSearchContent from "../categories/DrawerSearchContent";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { IoMdExit } from "react-icons/io";
+import { MdFavoriteBorder } from "react-icons/md";
+import { LogoutUser } from "../../services/userService";
+import { logout } from "../../redux/userSlice";
 
 const Header = () => {
   const [localState, setLocalState] = useReducer(
@@ -17,7 +23,10 @@ const Header = () => {
       openMenuDrawer: false,
     }
   );
-
+  const user = useSelector((state) => state.user);
+  console.log(user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleOnClick = (type) => {
     if (type === "search") {
       setLocalState({
@@ -45,7 +54,27 @@ const Header = () => {
       });
     }
   };
-
+  const handleLogout = async () => {
+    try {
+      if (user?.userId) {
+        const payload = { UserId: user.userId };
+        const logout_res = await LogoutUser(payload);
+        if (logout_res?.statusCode === 200) {
+          console.log("Logout success", logout_res);
+        } else {
+          console.error(
+            "Error during logout:",
+            logout_res?.message || "Unknown error"
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error during logout:", error.message);
+    } finally {
+      localStorage.removeItem("token");
+      dispatch(logout());
+    }
+  };
   return (
     <>
       <header
@@ -79,9 +108,50 @@ const Header = () => {
             <div className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer">
               <BsBag />
             </div>
-            <div className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer">
-              <BiUser />
-            </div>
+            {!user?.userId && (
+              <div
+                className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer"
+                onClick={() => navigate("/login")}
+              >
+                <BiUser />
+              </div>
+            )}
+            {user?.userId && (
+              <Popover
+                content={
+                  <div className="flex flex-col text-base items-start w-[200px]">
+                    <div className="font-semibold text-neutral-500 w-full p-2 cursor-pointer  hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center" onClick={()=>navigate("/account-setting")}>
+                      Profile
+                    </div>
+                    <div className="font-semibold text-neutral-500 w-full p-2  cursor-pointer hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center">
+                      Orders
+                    </div>
+                    <div className="font-semibold text-neutral-500 w-full p-2 cursor-pointer hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center">
+                      Wishlist
+                    </div>
+                    <div
+                      className="font-semibold text-neutral-500 w-full p-2 cursor-pointer hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center"
+                      onClick={() => handleLogout()}
+                    >
+                      Log Out <IoMdExit className="text-xl" />
+                    </div>
+                  </div>
+                }
+                overlayClassName="z-[99999999999]"
+              >
+                <div
+                  className="hover:bg-orange-600 hover:text-white text-black  hover:rounded-full cursor-pointer flex items-center "
+                  onClick={() => navigate("/account-setting")}
+                >
+                  <div className="p-4">
+                    <BiUser />
+                  </div>
+                  <div className="text-sm flex items-center">
+                    Hi, {user.userFirstName?.split(" ").slice(-1).join(" ")}
+                  </div>
+                </div>
+              </Popover>
+            )}
           </div>
         </div>
       </header>
