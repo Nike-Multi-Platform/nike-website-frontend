@@ -17,6 +17,7 @@ export const fetchBag = createAsyncThunk("cart/fetchBag", async (userId) => {
 const initialState = {
   cart: [],
   invalidItems: [],
+  totalPriceWithoutDiscount: 0,
   totalPrice: 0,
   totalItems: 0,
   totalQuantity: 0,
@@ -29,6 +30,7 @@ const cartSlice = createSlice({
     clearCart: (state) => {
       state.cart = [];
       state.discountPrice = 0;
+      state.totalPriceWithoutDiscount = 0;
       state.totalItems = 0;
       state.totalPrice = 0;
       state.totalQuantity = 0;
@@ -78,6 +80,14 @@ const cartSlice = createSlice({
               : acc,
           0
         );
+        const totalPriceWithoutDiscount = action.payload.data?.reduce(
+          (acc, item) =>
+            item?.is_selected && item?.details?.stock > 0
+              ? acc + item.amount * item.details.price
+              : acc,
+          0
+        );
+        state.totalPriceWithoutDiscount = totalPriceWithoutDiscount;
         state.totalPrice = totalPrice;
         const discountPrice = action.payload.data?.reduce(
           (acc, item) =>

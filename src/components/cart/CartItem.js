@@ -1,7 +1,15 @@
-import React, { memo, useCallback, useEffect, useReducer } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
 import { getImageByCloudinary } from "../../helpers/getImageByCloudinary";
 import {
+  Button,
   Checkbox,
+  Image,
   InputNumber,
   message,
   Modal,
@@ -9,6 +17,7 @@ import {
   Statistic,
 } from "antd";
 import {
+  getSizes,
   removeFromBag,
   updateQuantity,
   updateSelectedBagItem,
@@ -26,6 +35,7 @@ import {
   SearchOutlined,
   WarningFilled,
 } from "@ant-design/icons";
+import ModalSelectSize from "../modals/ModalSelectSize";
 const { Countdown } = Statistic;
 const CartItem = (props) => {
   const { item, key } = props;
@@ -39,6 +49,7 @@ const CartItem = (props) => {
     {
       selected: false,
       openModal: false,
+      openModalSelectSize: false,
     }
   );
   useEffect(() => {
@@ -167,6 +178,21 @@ const CartItem = (props) => {
       payload: true,
     });
   };
+  const handleShowModalSelectSize = useCallback(() => {
+    setLocalState({
+      type: "openModalSelectSize",
+      payload: true,
+    });
+  }, []);
+  const handleOnCloseModalSelectSize = useCallback(() => {
+    setLocalState({
+      type: "openModalSelectSize",
+      payload: false,
+    });
+  }, []);
+  const totalPrice = useMemo(() => {
+    return item?.details?.finalPrice * item?.amount;
+  }, [item?.details?.finalPrice, item?.amount]);
   return (
     <>
       <div key={key} className="w-full grid grid-cols-12">
@@ -193,7 +219,7 @@ const CartItem = (props) => {
               {item?.details?.productName}
             </div>
             <div className="font-semibold">
-              {item?.details?.finalPrice?.toLocaleString("vi-VN") + " VNĐ"}
+              {totalPrice?.toLocaleString("vi-VN") + " VNĐ"}
             </div>
           </div>
           <div className="text-neutral-500">
@@ -201,7 +227,10 @@ const CartItem = (props) => {
           </div>
           <div className="text-neutral-500 mb-2">
             <span>Size </span>
-            <span className="font-semibold underline cursor-pointer">
+            <span
+              className="font-semibold underline cursor-pointer"
+              onClick={handleShowModalSelectSize}
+            >
               {item?.productSizeName}
             </span>
           </div>
@@ -289,6 +318,12 @@ const CartItem = (props) => {
       >
         <p className="text-lg">Are you sure you want to delete this product?</p>
       </Modal>
+      <ModalSelectSize
+        item={item}
+        type="update"
+        open={localState?.openModalSelectSize}
+        onClose={handleOnCloseModalSelectSize}
+      />
     </>
   );
 };

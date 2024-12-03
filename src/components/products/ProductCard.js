@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 const ProductCard = (props) => {
   const { product, key } = props;
-  console.log("product", product);
   const salePrice =
     product?.registerFlashSaleProduct !== null &&
     product?.registerFlashSaleProduct?.quantity -

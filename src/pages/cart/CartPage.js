@@ -49,7 +49,8 @@ const CartPage = () => {
                   <div className="font-semibold">Total cost</div>
                   <div className="flex justify-center items-center font-semibold">
                     <sup>đ</sup>{" "}
-                    {cart?.totalPrice?.toLocaleString("vi-VN") || 0}
+                    {cart?.totalPriceWithoutDiscount?.toLocaleString("vi-VN") ||
+                      0}
                   </div>
                 </div>
                 <div className="flex justify-between py-2 border-b-[1px]">

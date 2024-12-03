@@ -60,10 +60,11 @@ export const updateSelectedBagItem = async (bag_id, isSelected) => {
   }
 };
 
-export const updateSize = async (bag_id, product_size_id) => {
+export const updateSize = async (bag_id, userId, product_size_id) => {
   try {
     const res = await axios.post(`${url}/update-size/${bag_id}`, null, {
       params: {
+        userId,
         product_size_id,
       },
     });
