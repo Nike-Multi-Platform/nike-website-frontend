@@ -56,7 +56,9 @@ const cartSlice = createSlice({
       .addCase(fetchBag.fulfilled, (state, action) => {
         state.status = "succeeded";
 
-        state.cart = action.payload.data;
+        state.cart = action.payload.data?.filter(
+          (bagItem) => bagItem?.details?.stock > 0
+        );
         const invalidItems = action.payload.data?.filter(
           (bagItem) => bagItem?.details?.stock === 0
         );

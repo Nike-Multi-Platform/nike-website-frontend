@@ -26,7 +26,6 @@ const Header = () => {
   );
   const user = useSelector((state) => state.user);
   const cart = useSelector((state) => state.cart);
-  console.log("cart", cart);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleOnClick = (type) => {
@@ -82,7 +81,6 @@ const Header = () => {
   useEffect(() => {
     if (user?.userId) {
       dispatch(fetchTotalItems(user?.userId));
-      dispatch(fetchBag(user?.userId));
     }
   }, [user?.userId, dispatch]);
   return (
@@ -112,12 +110,17 @@ const Header = () => {
             >
               <BsSearch />
             </div>
-            <div className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer">
+            <div
+              className="hover:bg-orange-600 hover:text-white text-black p-4 hover:rounded-full cursor-pointer"
+              onClick={() =>
+                user?.userId ? navigate("/favorites") : navigate("/login")
+              }
+            >
               <BsHeart />
             </div>
             <div
               className="hover:bg-orange-600 hover:text-white text-black px-5 py-4 hover:rounded-full cursor-pointer group"
-              // onClick={() =>  navigate("/login")}
+              onClick={() => navigate("/cart")}
             >
               <Badge count={cart?.totalItems} size="small">
                 <BsBag className="text-xl group-hover:text-white" />

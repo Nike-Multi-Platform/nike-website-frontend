@@ -3,8 +3,10 @@ import App from "../App";
 import AuthLayout from "../layout";
 import { createBrowserRouter } from "react-router-dom";
 import { Spin } from "antd";
-import CategoriesProduct from "../CategoriesProduct";
 
+const CategoriesProduct = lazy(() => import("../CategoriesProduct"));
+const FavoritePage = lazy(() => import("../pages/favorites/FavoritePage"));
+const CartPage = lazy(() => import("../pages/cart/CartPage"));
 const DetailProduct = lazy(() => import("../pages/products/DetailProduct"));
 const Home = lazy(() => import("../pages/Home"));
 const Login = lazy(() => import("../pages/authentication/Login"));
@@ -124,6 +126,38 @@ const router = createBrowserRouter([
               }
             >
               <DetailProduct />
+            </Suspense>
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/favorites",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <FavoritePage />
+            </Suspense>
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/cart",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <CartPage />
             </Suspense>
           </AuthLayout>
         ),

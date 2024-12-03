@@ -34,11 +34,11 @@ export const removeFromBag = async (bagId) => {
   }
 };
 
-export const updateQuantity = async (bag_id, type) => {
+export const updateQuantity = async (bag_id, quantity) => {
   try {
     const res = await axios.post(`${url}/update-quantity/${bag_id}`, null, {
       params: {
-        type,
+        quantity,
       },
     });
     return res.data;

@@ -326,14 +326,22 @@ const DetailProduct = () => {
                 </div>
               </div>
               <div className="flex gap-3 items-center">
-                {localState.currentColor?.salePrice === 0 && (
-                  <span className="font-nike text-body1 font-semibold text-lg text-neutral-700">
-                    {localState.product?.productPrice.toLocaleString("vi-VN") +
-                      " VNĐ"}
-                  </span>
-                )}
+                {localState.product?.registerFlashSaleProduct &&
+                  localState.product?.registerFlashSaleProduct?.quantity -
+                    localState.product?.registerFlashSaleProduct?.sold ===
+                    0 &&
+                  localState.currentColor?.salePrice === 0 && (
+                    <span className="font-nike text-body1 font-semibold text-lg text-neutral-700">
+                      {localState.product?.productPrice.toLocaleString(
+                        "vi-VN"
+                      ) + " VNĐ"}
+                    </span>
+                  )}
 
-                {!localState.product?.registerFlashSaleProduct &&
+                {localState.product?.registerFlashSaleProduct &&
+                  localState.product?.registerFlashSaleProduct?.quantity -
+                    localState.product?.registerFlashSaleProduct?.sold ===
+                    0 &&
                   localState.currentColor?.salePrice !== 0 && (
                     <>
                       <span className="font-nike text-lg text-body1 font-semibold text-neutral-700 ">
@@ -351,23 +359,26 @@ const DetailProduct = () => {
                       </span>
                     </>
                   )}
-                {localState.product?.registerFlashSaleProduct && (
-                  <>
-                    <span className="font-nike text-lg text-body1 font-semibold text-neutral-700 ">
-                      {localState?.product?.registerFlashSaleProduct?.flashSalePrice.toLocaleString(
-                        "vi-VN"
-                      ) + " VNĐ"}
-                    </span>
-                    <span className="font-nike text-sm text-body1 font-semibold text-neutral-500 line-through ">
-                      {localState.product?.productPrice.toLocaleString(
-                        "vi-VN"
-                      ) + " VNĐ"}
-                    </span>
-                    <span className="font-nike text-sm  p-2 rounded bg-green-500 text-white">
-                      -{localState.salePercent}%
-                    </span>
-                  </>
-                )}
+                {localState.product?.registerFlashSaleProduct &&
+                  localState.product?.registerFlashSaleProduct?.quantity -
+                    localState.product?.registerFlashSaleProduct?.sold >
+                    0 && (
+                    <>
+                      <span className="font-nike text-lg text-body1 font-semibold text-neutral-700 ">
+                        {localState?.product?.registerFlashSaleProduct?.flashSalePrice.toLocaleString(
+                          "vi-VN"
+                        ) + " VNĐ"}
+                      </span>
+                      <span className="font-nike text-sm text-body1 font-semibold text-neutral-500 line-through ">
+                        {localState.product?.productPrice.toLocaleString(
+                          "vi-VN"
+                        ) + " VNĐ"}
+                      </span>
+                      <span className="font-nike text-sm  p-2 rounded bg-green-500 text-white">
+                        -{localState.salePercent}%
+                      </span>
+                    </>
+                  )}
               </div>
               <div className="gap-2 flex flex-wrap overflow-y-auto max-h-[160px] mt-7">
                 {Array.isArray(localState.product?.products) &&
