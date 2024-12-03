@@ -1,9 +1,14 @@
 import React, { memo, useReducer } from "react";
 import HamanLogo from "../../assets/HamansLogo.png";
-import { Input, Space, Tag } from "antd";
+import { Input, Tag } from "antd";
+import { useNavigate } from "react-router-dom";
+
 const { Search } = Input;
+
 const DrawerSearchContent = (props) => {
-  const { open, onClose } = props;
+  const { onClose } = props;
+  const navigate = useNavigate();
+
   const [localState, setLocalState] = useReducer(
     (state, action) => {
       return { ...state, [action.type]: action.payload };
@@ -12,17 +17,32 @@ const DrawerSearchContent = (props) => {
       searchText: "",
     }
   );
+
+  // Khi người dùng nhập từ khóa
   const onTextChange = (value) => {
     const text = value.target.value;
-    console.log(text);
-    setLocalState({
-      type: "searchText",
-      payload: text,
-    });
+    setLocalState({ type: "searchText", payload: text });
   };
+
+  // Khi nhấn nút tìm kiếm
   const onSearch = (value) => {
-    console.log(value);
+    const searchText = value || localState.searchText;
+    navigate(
+      `/categories?sub_categories_id=-1&searchText=${encodeURIComponent(
+        searchText
+      )}&productObjectId=-1&minPrice=0&maxPrice=0&IsSortAscending=true&page=1`
+    );
   };
+
+  // Gợi ý từ lịch sử tìm kiếm
+  const handleTagClick = (searchText) => {
+    navigate(
+      `/categories?sub_categories_id=-1&searchText=${encodeURIComponent(
+        searchText
+      )}&productObjectId=-1&minPrice=0&maxPrice=0&IsSortAscending=true&page=1`
+    );
+  };
+
   const searchHistory = [
     {
       id: 1,
@@ -37,18 +57,19 @@ const DrawerSearchContent = (props) => {
       searchText: "Pants",
     },
   ];
+
   return (
-    <div className="">
+    <div className="p-4">
       <div className="w-full grid grid-cols-12 items-center">
         <div className="col-span-3">
-          <img src={HamanLogo} alt="" className="w-40" />
+          <img src={HamanLogo} alt="Logo" className="w-40" />
         </div>
         <div className="col-span-6">
           <Search
             size="large"
             placeholder="Search"
             allowClear
-            // value={localState.searchText}
+            value={localState.searchText}
             onChange={onTextChange}
             onSearch={onSearch}
           />
@@ -62,7 +83,7 @@ const DrawerSearchContent = (props) => {
           </span>
         </div>
       </div>
-      <div className="w-full grid grid-cols-12 items-center">
+      <div className="w-full grid grid-cols-12 items-center mt-4">
         <div className="col-span-3"></div>
         <div className="col-span-6 flex flex-col gap-2">
           <span className="text-neutral-700 font-semibold text-lg">
@@ -70,7 +91,12 @@ const DrawerSearchContent = (props) => {
           </span>
           <div className="flex gap-2">
             {searchHistory.map((history) => (
-              <Tag key={history.id} color="#f50" className="cursor-pointer">
+              <Tag
+                key={history.id}
+                color="#f50"
+                className="cursor-pointer"
+                onClick={() => handleTagClick(history.searchText)}
+              >
                 {history.searchText}
               </Tag>
             ))}
