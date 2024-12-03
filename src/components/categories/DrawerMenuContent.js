@@ -4,22 +4,20 @@ import { BiCloset } from "react-icons/bi";
 import { CgClose } from "react-icons/cg";
 import { getCategories } from "../../services/catServices";
 
+import { useNavigate } from "react-router-dom";
+
 const DrawerMenuContent = (props) => {
   const { open, onClose } = props;
   const [localState, setLocalState] = useReducer(
-    (state, action) => {
-      return { ...state, [action.type]: action.payload };
-    },
-    {
-      categories: [],
-    }
+    (state, action) => ({ ...state, [action.type]: action.payload }),
+    { categories: [] }
   );
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await getCategories();
-        console.log(res);
         setLocalState({
           type: "categories",
           payload: res.data,
@@ -32,41 +30,50 @@ const DrawerMenuContent = (props) => {
       fetchCategories();
     }
   }, [open]);
+
+  const handleSubCategoryClick = (subCategoryId, categoryId) => {
+    navigate(
+      `/categories?sub_categories_id=${subCategoryId}&category_id=${categoryId}`
+    );
+    onClose();
+  };
+
   return (
     <div className="w-full max-w-full flex flex-col gap-3">
       <span className="text-[50px] cursor-pointer" onClick={onClose}>
         <CgClose />
       </span>
-      <div className="">
-        <Menu mode="inline" className="text-lg font-semibold text-neutral-500">
-          {localState.categories.map((category) => (
-            <Menu.SubMenu
-              key={"object_" + category.productId}
-              title={<span className="uppercase">{category.productName}</span>}
-              className="text-lg font-semibold text-neutral-500 "
-            >
-              {category.categories.map((subCategory) => (
-                <Menu.SubMenu
-                  key={"category_" + subCategory.categoryId}
-                  title={subCategory.categoryName}
-                  className="text-base text-neutral-500"
-                >
-                  {subCategory.subCategories.map((subSubCategory) => (
-                    <Menu.Item
-                      key={"subCat_" + subSubCategory.subCategoryId}
-                      className="text-sm"
-                    >
-                      {subSubCategory.subCategoryName}
-                    </Menu.Item>
-                  ))}
-                </Menu.SubMenu>
-              ))}
-            </Menu.SubMenu>
-          ))}
-          <Menu.Item key="4">ABOUT US</Menu.Item>
-          <Menu.Item key="5">POLICY</Menu.Item>
-        </Menu>
-      </div>
+      <Menu mode="inline" className="text-lg font-semibold text-neutral-500">
+        {localState.categories.map((category) => (
+          <Menu.SubMenu
+            key={`object_${category.productId}`}
+            title={<span className="uppercase">{category.productName}</span>}
+          >
+            {category.categories.map((subCategory) => (
+              <Menu.SubMenu
+                key={`category_${subCategory.categoryId}`}
+                title={subCategory.categoryName}
+              >
+                {subCategory.subCategories.map((subSubCategory) => (
+                  <Menu.Item
+                    key={`subCat_${subSubCategory.subCategoryId}`}
+                    onClick={() =>
+                      handleSubCategoryClick(
+                        subSubCategory.subCategoryId,
+                        subCategory.categoryId
+                      )
+                    }
+                  >
+                    {subSubCategory.subCategoryName}
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
+            ))}
+          </Menu.SubMenu>
+        ))}
+        <Menu.Item key="4">ABOUT US</Menu.Item>
+        <Menu.Item key="5">POLICY</Menu.Item>
+      </Menu>
     </div>
   );
 };
