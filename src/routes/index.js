@@ -35,7 +35,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/categories/:subCategoryId",
+        path: "/categories",
         element: (
           <AuthLayout>
             <Suspense

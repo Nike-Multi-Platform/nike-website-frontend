@@ -1,15 +1,15 @@
 import axios from "axios";
 
-const URL = `${process.env.REACT_APP_BACKEND_URL}/api/`;
+const url = `${process.env.REACT_APP_BACKEND_URL}/api/`;
 
 export default class productServices {
-  BASE_URL = URL + "Product";
+  
 
   static async getProductParents(subCategoryId, queryObject) {
+    const BASE_URL = url + "Product";
     try {
-      console.log("base_url", this.BASE_URL);
-      let url =
-        `${this.BASE_URL}/product-parents/${subCategoryId}?` +
+      let url = `${BASE_URL}/product-parents?` +
+        `SubCategoryId=${subCategoryId}&` +
         `ProductName=${queryObject.ProductName}&` +
         `ProductObjectId=${queryObject.ProductObjectId}&` +
         `MinPrice=${queryObject.MinPrice}&` +
@@ -19,11 +19,25 @@ export default class productServices {
         `Page=${queryObject.Page}&` +
         `PageSize=${queryObject.PageSize}`;
       console.log(url);
-
+  
       const response = await axios.get(url);
       return response.data;
     } catch (error) {
       throw error;
     }
   }
+
+    static async getSubCategoriesByCategoryId(categoryId) {
+      const BASE_URL2 = url+"";
+      try {
+          const url = `${BASE_URL2}Category/${categoryId}`;
+          console.log(url);
+          const response = await axios.get(url);
+          return response.data;
+      } catch (error) {
+          throw error;
+      }
+  }
+
+
 }
