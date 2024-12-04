@@ -30,7 +30,7 @@ const DrawerSearchContent = (props) => {
     navigate(
       `/categories?sub_categories_id=-1&searchText=${encodeURIComponent(
         searchText
-      )}&productObjectId=-1&minPrice=0&maxPrice=0&IsSortAscending=true&page=1`
+      )}&productObjectId=-1`
     );
   };
 
@@ -39,7 +39,7 @@ const DrawerSearchContent = (props) => {
     navigate(
       `/categories?sub_categories_id=-1&searchText=${encodeURIComponent(
         searchText
-      )}&productObjectId=-1&minPrice=0&maxPrice=0&IsSortAscending=true&page=1`
+      )}&productObjectId=-1`
     );
   };
 
