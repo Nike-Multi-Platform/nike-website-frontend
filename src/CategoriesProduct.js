@@ -15,7 +15,7 @@ const CategoriesProduct = () => {
 
   const [productParents, setProductParents] = useState([]);
   const [objectQuery, setObjectQuery] = useState({
-    SubCategoryId: 1,
+    SubCategoryId: -1,
     ProductName: "-1",
     ProductObjectId: "-1",  // Keep it as a string here
     MinPrice: 0,
@@ -173,13 +173,12 @@ const CategoriesProduct = () => {
           </Row>
 
           {/* Phân trang */}
-          <div className="pagination-container">
+          <div className="pagination-container" style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
             <Pagination
               current={objectQuery.Page}
               pageSize={objectQuery.PageSize}
               total={productParents?.length}
               onChange={onChange}
-              style={{ marginTop: 24 }}
             />
           </div>
         </Content>
