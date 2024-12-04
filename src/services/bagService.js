@@ -1,4 +1,5 @@
 import axios from "axios";
+import { u } from "framer-motion/client";
 
 const url = `${process.env.REACT_APP_BACKEND_URL}/api/Bag`;
 
@@ -97,6 +98,18 @@ export const getTotalItems = async (userId) => {
     const res = await axios.get(`${url}/get-total-items/${userId}`);
     return res.data;
   } catch (error) {
+    throw new Error(error.response?.data?.message || error.message);
+  }
+};
+
+export const applyVoucher = async (userId, voucherCode) => {
+  try {
+    const res = await axios.get(
+      `${url}/apply-voucher?userId=${userId}&promoCode=${voucherCode}`
+    );
+    return res.data;
+  } catch (error) {
+    
     throw new Error(error.response?.data?.message || error.message);
   }
 };

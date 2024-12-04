@@ -4,6 +4,10 @@ import AuthLayout from "../layout";
 import { createBrowserRouter } from "react-router-dom";
 import { Spin } from "antd";
 
+const CheckoutResultPage = lazy(() =>
+  import("../pages/cart/CheckoutResultPage")
+);
+const CheckoutPage = lazy(() => import("../pages/cart/CheckoutPage"));
 const CategoriesProduct = lazy(() => import("../CategoriesProduct"));
 const FavoritePage = lazy(() => import("../pages/favorites/FavoritePage"));
 const CartPage = lazy(() => import("../pages/cart/CartPage"));
@@ -13,6 +17,7 @@ const Login = lazy(() => import("../pages/authentication/Login"));
 const Register = lazy(() => import("../pages/authentication/Register"));
 const AccountSetting = lazy(() => import("../pages/profile/AccountSetting"));
 const UserWallet = lazy(() => import("../pages/profile/UserWallet"));
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -158,6 +163,38 @@ const router = createBrowserRouter([
               }
             >
               <CartPage />
+            </Suspense>
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/cart/checkout",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <CheckoutPage />
+            </Suspense>
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/cart/checkout/result",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <CheckoutResultPage />
             </Suspense>
           </AuthLayout>
         ),

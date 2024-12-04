@@ -19,22 +19,34 @@ const CartPage = () => {
       dispatch(fetchBag(user?.userId));
     }
   }, [dispatch, user?.userId]);
-  console.log("cart", cart);
+  const anySelectProduct = cart?.cart?.some((item) => item?.is_selected);
+
   return (
     <>
       {user?.userId && (
         <>
           <div className="max-w-[1100px] mx-auto grid grid-cols-12 my-10 gap-8">
-            <div className="col-span-7">
-              <div className="text-3xl font-semibold mb-8">Bag</div>
-              <div className="w-full flex flex-col gap-4 border-b-[1px]">
-                {cart?.cart?.length === 0 && (
-                  <div className="text-xl">Your cart is empty</div>
-                )}
-                {cart?.cart?.length > 0 &&
-                  cart?.cart?.map((item, index) => (
-                    <CartItem key={index} item={item} />
-                  ))}
+            <div className="col-span-7 flex flex-col gap-4">
+              <div className="">
+                <div className="text-3xl font-semibold mb-8">Bag</div>
+                <div className="w-full flex flex-col gap-4 border-b-[1px]">
+                  {cart?.cart?.length === 0 && (
+                    <div className="text-xl">Your cart is empty</div>
+                  )}
+                  {cart?.cart?.length > 0 &&
+                    cart?.cart?.map((item, index) => (
+                      <CartItem key={index} item={item} />
+                    ))}
+                </div>
+              </div>
+              <div className="">
+                <div className="text-lg font-semibold mb-8">Invalid Items</div>
+                <div className="w-full flex flex-col gap-4 ">
+                  {cart?.invalidItems?.length > 0 &&
+                    cart?.invalidItems?.map((item, index) => (
+                      <CartItem key={index} item={item} type="invalid" />
+                    ))}
+                </div>
               </div>
             </div>
             <div className="col-span-5">
@@ -82,8 +94,17 @@ const CartPage = () => {
                   </div>
                 </div>
               </div>
-              <Button className="w-full rounded-full mt-6 bg-red-500 border-red-500 text-white text-lg hover:opacity-80">
-                {" "}
+              <Button
+                className="w-full rounded-full mt-6 bg-red-500 border-red-500 text-white text-lg hover:opacity-80"
+                disabled={!anySelectProduct}
+                onClick={() => {
+                  if (anySelectProduct) {
+                    navigate("/cart/checkout");
+                  } else {
+                    alert("Please select at least one product to checkout");
+                  }
+                }}
+              >
                 Checkout
               </Button>
             </div>

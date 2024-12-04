@@ -40,7 +40,7 @@ const ModalSelectSize = (props) => {
         console.error(error);
       }
     };
-    console.log("open", item);
+
     if (open) {
       fetchSizes();
     }

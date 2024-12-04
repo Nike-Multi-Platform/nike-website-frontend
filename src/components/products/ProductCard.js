@@ -83,10 +83,10 @@ const ProductCard = (props) => {
             {salePrice !== 0 && (
               <>
                 <span className="font-nikeBody text-body1 font-semibold text-base text-neutral-700">
-                  {salePrice.toLocaleString("vi-VN") + " VNĐ"}
+                  {salePrice?.toLocaleString("vi-VN") + " VNĐ"}
                 </span>
                 <span className="font-nikeBody text-sm text-body1 font-semibold text-neutral-500 line-through">
-                  {product.productPrice.toLocaleString("vi-VN") + " VNĐ"}
+                  {product?.productPrice?.toLocaleString("vi-VN") + " VNĐ"}
                 </span>
               </>
             )}

@@ -326,10 +326,11 @@ const DetailProduct = () => {
                 </div>
               </div>
               <div className="flex gap-3 items-center">
-                {localState.product?.registerFlashSaleProduct &&
+                {((localState.product?.registerFlashSaleProduct &&
                   localState.product?.registerFlashSaleProduct?.quantity -
                     localState.product?.registerFlashSaleProduct?.sold ===
-                    0 &&
+                    0) ||
+                  localState.product?.registerFlashSaleProduct === null) &&
                   localState.currentColor?.salePrice === 0 && (
                     <span className="font-nike text-body1 font-semibold text-lg text-neutral-700">
                       {localState.product?.productPrice.toLocaleString(
@@ -338,10 +339,11 @@ const DetailProduct = () => {
                     </span>
                   )}
 
-                {localState.product?.registerFlashSaleProduct &&
+                {((localState.product?.registerFlashSaleProduct &&
                   localState.product?.registerFlashSaleProduct?.quantity -
                     localState.product?.registerFlashSaleProduct?.sold ===
-                    0 &&
+                    0) ||
+                  localState.product?.registerFlashSaleProduct === null) &&
                   localState.currentColor?.salePrice !== 0 && (
                     <>
                       <span className="font-nike text-lg text-body1 font-semibold text-neutral-700 ">

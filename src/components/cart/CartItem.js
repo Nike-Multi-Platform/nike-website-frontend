@@ -38,7 +38,7 @@ import {
 import ModalSelectSize from "../modals/ModalSelectSize";
 const { Countdown } = Statistic;
 const CartItem = (props) => {
-  const { item, key } = props;
+  const { item, key, type = "valid" } = props;
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -196,13 +196,20 @@ const CartItem = (props) => {
   return (
     <>
       <div key={key} className="w-full grid grid-cols-12">
-        <div className="col-span-1 flex justify-between items-center">
-          <Checkbox
-            checked={localState?.selected}
-            onChange={handleCheckboxChange}
-          />
-        </div>
-        <div className="col-span-3 flex items-center justify-center cursor-pointer">
+        {type === "valid" && (
+          <div className="col-span-1 flex justify-between items-center">
+            <Checkbox
+              checked={localState?.selected}
+              onChange={handleCheckboxChange}
+            />
+          </div>
+        )}
+
+        <div
+          className={`${
+            type === "valid" ? "col-span-3" : "col-span-4"
+          } flex items-center justify-center cursor-pointer`}
+        >
           <img
             src={getImageByCloudinary(item?.details?.productImage)}
             alt=""
@@ -261,43 +268,41 @@ const CartItem = (props) => {
             </div>
           </div>
         </div>
-        <div className="col-span-12 flex justify-between mt-4">
-          {item?.registerFlashSaleProduct?.registerFlashSaleProduct && (
-            <>
-              <div className="w-fit pl-16 text-orange-500 flex gap-2 items-center">
-                <ClockCircleFilled /> Flash Sale will ended in{" "}
-                <Countdown
-                  valueStyle={{
-                    color: "#ff4d4f",
-                    fontSize: "18px",
-                    fontWeight: 500,
-                  }}
-                  onFinish={() => {
-                    message.warning("Flash Sale ended!");
-                    dispatch(fetchBag(user?.userId));
-                  }}
-                  value={new Date(item?.registerFlashSaleProduct?.ended_at)}
-                />
-              </div>
-              {item?.registerFlashSaleProduct?.registerFlashSaleProduct
-                ?.quantity -
-                item?.registerFlashSaleProduct?.registerFlashSaleProduct
-                  ?.sold <=
-                10 && (
-                <div className="flex gap-2 items-center">
-                  <span className="text-sm text-gray-400">Left: </span>
-                  <span className="text-sm text-primary font-semibold">
-                    {item?.registerFlashSaleProduct?.registerFlashSaleProduct
-                      ?.quantity -
-                      item?.registerFlashSaleProduct?.registerFlashSaleProduct
-                        ?.sold}{" "}
-                    products
-                  </span>
+        {type === "valid" && (
+          <div className="col-span-12 flex justify-between mt-4">
+            {item?.registerFlashSaleProduct && (
+              <>
+                <div className="w-fit pl-16 text-orange-500 flex gap-2 items-center">
+                  <ClockCircleFilled /> Flash Sale will ended in{" "}
+                  <Countdown
+                    valueStyle={{
+                      color: "#ff4d4f",
+                      fontSize: "18px",
+                      fontWeight: 500,
+                    }}
+                    onFinish={() => {
+                      message.warning("Flash Sale ended!");
+                      dispatch(fetchBag(user?.userId));
+                    }}
+                    value={new Date(item?.registerFlashSaleProduct?.ended_at)}
+                  />
                 </div>
-              )}
-            </>
-          )}
-        </div>
+                {item?.registerFlashSaleProduct?.quantity -
+                  item?.registerFlashSaleProduct?.sold <=
+                  10 && (
+                  <div className="flex gap-2 items-center">
+                    <span className="text-sm text-gray-400">Left: </span>
+                    <span className="text-sm text-primary font-semibold">
+                      {item?.registerFlashSaleProduct?.quantity -
+                        item?.registerFlashSaleProduct?.sold}{" "}
+                      products
+                    </span>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </div>
       <Modal
         title={
