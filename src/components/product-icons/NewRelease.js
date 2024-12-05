@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useReducer } from "react";
 import { getNewRelease } from "../../services/productParentServices";
 import ProductCard from "../products/ProductCard";
+import { useNavigate } from "react-router-dom";
 
 const NewRelease = () => {
   const [localState, setLocalState] = useReducer(
@@ -11,6 +12,7 @@ const NewRelease = () => {
       newReleases: [],
     }
   );
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchNewReleases = async () => {
       try {
@@ -33,7 +35,10 @@ const NewRelease = () => {
             <span className="font-nike  uppercase text-2xl font-semibold">
               Just In
             </span>
-            <span className="text-neutral-500 font-semibold cursor-pointer">
+            <span
+              className="text-neutral-500 font-semibold cursor-pointer"
+              onClick={() => navigate("/categories?SortBy=createAt")}
+            >
               See All
             </span>
           </div>

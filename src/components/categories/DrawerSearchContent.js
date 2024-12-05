@@ -27,20 +27,12 @@ const DrawerSearchContent = (props) => {
   // Khi nhấn nút tìm kiếm
   const onSearch = (value) => {
     const searchText = value || localState.searchText;
-    navigate(
-      `/categories?sub_categories_id=-1&searchText=${encodeURIComponent(
-        searchText
-      )}&productObjectId=-1`
-    );
+    navigate(`/categories?searchText=${encodeURIComponent(searchText)}`);
   };
 
   // Gợi ý từ lịch sử tìm kiếm
   const handleTagClick = (searchText) => {
-    navigate(
-      `/categories?sub_categories_id=-1&searchText=${encodeURIComponent(
-        searchText
-      )}&productObjectId=-1`
-    );
+    navigate(`/categories?searchText=${encodeURIComponent(searchText)}`);
   };
 
   const searchHistory = [

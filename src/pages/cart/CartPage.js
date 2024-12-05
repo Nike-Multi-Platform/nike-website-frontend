@@ -39,15 +39,18 @@ const CartPage = () => {
                     ))}
                 </div>
               </div>
-              <div className="">
-                <div className="text-lg font-semibold mb-8">Invalid Items</div>
-                <div className="w-full flex flex-col gap-4 ">
-                  {cart?.invalidItems?.length > 0 &&
-                    cart?.invalidItems?.map((item, index) => (
+              {cart?.invalidItems?.length > 0 && (
+                <div className="">
+                  <div className="text-lg font-semibold mb-8">
+                    Invalid Items
+                  </div>
+                  <div className="w-full flex flex-col gap-4 ">
+                    {cart?.invalidItems?.map((item, index) => (
                       <CartItem key={index} item={item} type="invalid" />
                     ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             <div className="col-span-5">
               <div className="flex flex-col mb-4">

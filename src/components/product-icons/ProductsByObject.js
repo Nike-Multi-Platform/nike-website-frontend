@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import { getProductsByObjectId } from "../../services/productParentServices";
 import ProductCard from "../products/ProductCard";
+import { useNavigate } from "react-router-dom";
 
 const ProductsByObject = (props) => {
   const { objectId } = props;
@@ -12,6 +13,7 @@ const ProductsByObject = (props) => {
       products: [],
     }
   );
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchProductsByObject = async () => {
       try {
@@ -36,7 +38,12 @@ const ProductsByObject = (props) => {
             <span className="font-nike  uppercase text-2xl font-semibold">
               {objectId === 1 ? "Men" : objectId === 2 ? "Women" : "Kids"}
             </span>
-            <span className="text-neutral-500 font-semibold cursor-pointer">
+            <span
+              className="text-neutral-500 font-semibold cursor-pointer"
+              onClick={() =>
+                navigate(`/categories?productObjectId=${objectId}`)
+              }
+            >
               See All
             </span>
           </div>

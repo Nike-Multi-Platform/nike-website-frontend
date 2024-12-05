@@ -127,7 +127,7 @@ const CheckoutResultPage = () => {
     }
   }, [status, method]);
   return (
-    <section className="max-w-[1200px] mx-auto py-5">
+    <section className="max-w-[1400px] mx-auto py-5">
       <div className="grid grid-cols-12 gap-7">
         <div className="col-span-12">
           <Result

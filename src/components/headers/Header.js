@@ -99,9 +99,11 @@ const Header = () => {
           >
             <CiMenuBurger />
           </span>
-          <a href="/" className="w-full flex justify-center items-center">
-            <img src={HamanLogo} alt="" className="ml-24 w-72" />
-          </a>
+          <div className="w-full flex justify-center items-center">
+            <a href="/" className="">
+              <img src={HamanLogo} alt="" className="ml-36 w-72" />
+            </a>
+          </div>
 
           <div className="flex justify-center items-center gap-2 text-xl font-semibold">
             <div
@@ -145,10 +147,16 @@ const Header = () => {
                     >
                       Profile
                     </div>
-                    <div className="font-semibold text-neutral-500 w-full p-2  cursor-pointer hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center">
+                    <div
+                      className="font-semibold text-neutral-500 w-full p-2  cursor-pointer hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center"
+                      onClick={() => navigate("/orders?statusId=0")}
+                    >
                       Orders
                     </div>
-                    <div className="font-semibold text-neutral-500 w-full p-2 cursor-pointer hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center">
+                    <div
+                      className="font-semibold text-neutral-500 w-full p-2 cursor-pointer hover:bg-neutral-100 hover:text-orange-500 flex gap-2 items-center"
+                      onClick={() => navigate("/favorites")}
+                    >
                       Wishlist
                     </div>
                     <div

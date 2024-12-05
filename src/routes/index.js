@@ -3,7 +3,9 @@ import App from "../App";
 import AuthLayout from "../layout";
 import { createBrowserRouter } from "react-router-dom";
 import { Spin } from "antd";
+import OrderDetailPage from "../pages/orders/OrderDetailPage";
 
+const OrdersPage = lazy(() => import("../pages/orders/OrdersPage"));
 const CheckoutResultPage = lazy(() =>
   import("../pages/cart/CheckoutResultPage")
 );
@@ -198,6 +200,40 @@ const router = createBrowserRouter([
             </Suspense>
           </AuthLayout>
         ),
+      },
+      {
+        path: "/orders",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <OrdersPage />
+            </Suspense>
+          </AuthLayout>
+        ),
+        children: [
+          {
+            path: "details/:order_id",
+            element: (
+              <AuthLayout>
+                <Suspense
+                  fallback={
+                    <div className="w-full flex justify-center items-center">
+                      <Spin size="large" />
+                    </div>
+                  }
+                >
+                  <OrderDetailPage />
+                </Suspense>
+              </AuthLayout>
+            ),
+          },
+        ],
       },
       //Add more routes here
     ],

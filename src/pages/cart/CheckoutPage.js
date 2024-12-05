@@ -580,8 +580,8 @@ const CheckoutPage = () => {
               orderCode: null,
               orderCodeReturn: null,
               return_expiration_date: null,
-              isReviewed: false,
-              isProcessed: false,
+              isReviewed: 0,
+              isProcessed: 0,
               voucherApplied:
                 localState.voucher !== null ? `${localState.voucher}` : null,
               isCanceledBy: null,
