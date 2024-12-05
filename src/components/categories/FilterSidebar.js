@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Slider, Checkbox } from "antd";
+import { Layout, Menu, Checkbox } from "antd";
 import { ShopOutlined, DollarOutlined, ManOutlined } from "@ant-design/icons";
 import productServices from "../../services/productServices";
 import { useSearchParams, useNavigate } from "react-router-dom";
@@ -43,40 +43,72 @@ const FilterSidebar = (props) => {
     const params = new URLSearchParams();
     params.set("sub_categories_id", query.SubCategoryId.toString());
     params.set("searchText", query.ProductName);
-    if (Array.isArray(query.ProductObjectId)) {
-      params.set("productObjectId", query.ProductObjectId.join(","));
+
+    if (query.ProductObjectId && query.ProductObjectId !== "-1") {
+      params.set("productObjectId", query.ProductObjectId);
     } else {
-      params.set("productObjectId", query.ProductObjectId.toString());
+      params.delete("productObjectId");
     }
-    params.set("minPrice", query.MinPrice.toString());
-    params.set("maxPrice", query.MaxPrice.toString());
+
+    if (query.MinPrice != null && query.MaxPrice != null) {
+      params.set("minPrice", query.MinPrice.toString());
+      params.set("maxPrice", query.MaxPrice.toString());
+    }
+
     params.set("IsSortAscending", query.IsSortAscending.toString());
     params.set("page", query.Page.toString());
     navigate(`?${params.toString()}`, { replace: true });
   };
 
-  const [genders, setGenders] = useState([]); // Mỗi lúc chọn checkBox sẽ lấy id bỏ vào mảng genders nếu genders.length=2
+  const [genders, setGenders] = useState([]);
 
   useEffect(() => {
-    console.log(genders);
-
     const newQuery = { ...props.objectQuery };
     if (genders.length === 0) {
-      newQuery.ProductObjectId = -1; // Lấy hết
+      newQuery.ProductObjectId = "-1"; // Set to -1 when no gender is selected
     } else {
-      newQuery.ProductObjectId = genders; // Chọn các giới tính
+      newQuery.ProductObjectId = genders.join(",");
     }
     props.setObjectQuery(newQuery);
     updateUrlParams(newQuery);
   }, [genders]);
 
+  const [selectedPrice, setSelectedPrice] = useState(null);
+
+  useEffect(() => {
+    const newQuery = { ...props.objectQuery };
+    if (selectedPrice) {
+      newQuery.MinPrice = selectedPrice.min;
+      newQuery.MaxPrice = selectedPrice.max;
+    } else {
+      newQuery.MinPrice = null;
+      newQuery.MaxPrice = null;
+    }
+    props.setObjectQuery(newQuery);
+    updateUrlParams(newQuery);
+  }, [selectedPrice]);
+
+  const priceRanges = [
+    { label: "Under 1,000,000 đ", min: 0, max: 1000000 },
+    { label: "1,000,000 đ - 2,500,000 đ", min: 1000000, max: 2500000 },
+    { label: "2,500,000 đ - 5,000,000 đ", min: 2500000, max: 5000000 },
+    { label: "5,000,000 đ - 10,000,000 đ", min: 5000000, max: 9999999 },
+    { label: "Over 10,000,000 đ", min: 10000000, max: Number.MAX_SAFE_INTEGER },
+  ];
+
+  const handleGenderChange = (genderId) => {
+    setGenders((prevGenders) => {
+      if (prevGenders.includes(genderId)) {
+        return prevGenders.filter((id) => id !== genderId);
+      } else {
+        return [...prevGenders, genderId];
+      }
+    });
+  };
+
   return (
     <Sider width={250} className="site-layout-background">
-      <Menu
-        mode="inline"
-        defaultSelectedKeys={["1"]}
-        style={{ height: "100%", borderRight: 0 }}
-      >
+      <Menu mode="inline" defaultSelectedKeys={["1"]} style={{ height: "100%", borderRight: 0 }}>
         <SubMenu key="sub1" icon={<ShopOutlined />} title={categoryName}>
           {Array.isArray(subCategories) &&
             subCategories.map((subCategory) => (
@@ -99,37 +131,31 @@ const FilterSidebar = (props) => {
 
         <SubMenu key="sub2" icon={<DollarOutlined />} title="Price">
           <div style={{ padding: "0 16px" }}>
-            <Slider
-              range
-              defaultValue={[0, 2500000]}
-              min={0}
-              max={9000000}
-              step={500000}
-              value={[props.objectQuery.MinPrice, props.objectQuery.MaxPrice]}
-              onChange={(value) => {
-                const newQuery = {
-                  ...props.objectQuery,
-                  MinPrice: value[0],
-                  MaxPrice: value[1],
-                };
-                props.setObjectQuery(newQuery);
-                updateUrlParams(newQuery);
-              }}
-            />
+            {priceRanges.map((range) => (
+              <div key={range.label}>
+                <Checkbox
+                  checked={selectedPrice && selectedPrice.min === range.min && selectedPrice.max === range.max}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedPrice(range);
+                    } else {
+                      setSelectedPrice(null);
+                    }
+                  }}
+                >
+                  {range.label}
+                </Checkbox>
+              </div>
+            ))}
           </div>
         </SubMenu>
+
         <SubMenu key="sub3" icon={<ManOutlined />} title="Gender">
           <div style={{ padding: "0 16px" }}>
             <div>
               <Checkbox
                 checked={genders.includes(1)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setGenders([...genders, 1]);
-                  } else {
-                    setGenders(genders.filter((number) => number !== 1));
-                  }
-                }}
+                onChange={() => handleGenderChange(1)}
               >
                 Men
               </Checkbox>
@@ -137,13 +163,7 @@ const FilterSidebar = (props) => {
             <div>
               <Checkbox
                 checked={genders.includes(2)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setGenders([...genders, 2]);
-                  } else {
-                    setGenders(genders.filter((number) => number !== 2));
-                  }
-                }}
+                onChange={() => handleGenderChange(2)}
               >
                 Women
               </Checkbox>
