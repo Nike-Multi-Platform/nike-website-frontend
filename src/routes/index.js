@@ -10,7 +10,7 @@ const CheckoutResultPage = lazy(() =>
   import("../pages/cart/CheckoutResultPage")
 );
 const CheckoutPage = lazy(() => import("../pages/cart/CheckoutPage"));
-const CategoriesProduct = lazy(() => import("../CategoriesProduct"));
+const CategoriesProduct = lazy(() => import("../pages/search-filter/CategoriesProduct"));
 const FavoritePage = lazy(() => import("../pages/favorites/FavoritePage"));
 const CartPage = lazy(() => import("../pages/cart/CartPage"));
 const DetailProduct = lazy(() => import("../pages/products/DetailProduct"));
