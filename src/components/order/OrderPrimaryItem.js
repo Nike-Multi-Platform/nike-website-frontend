@@ -26,7 +26,7 @@ const statusColors = {
 };
 
 const OrderPrimaryItem = (props) => {
-  const { order, key } = props;
+  const { order, key, onUpdate } = props;
   const [localState, setLocalState] = useReducer(
     (state, action) => {
       return { ...state, [action.type]: action.payload };
@@ -208,6 +208,7 @@ const OrderPrimaryItem = (props) => {
         openModal={
           localState?.modal.type === "review" ? localState.modal.visible : false
         }
+        onUpdate={onUpdate}
         onClose={handleCloseModal}
       />
     </>

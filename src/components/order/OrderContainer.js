@@ -26,29 +26,30 @@ const OrderContainer = () => {
   const keywords =
     new URLSearchParams(window.location.search).get("keywords") || "";
   const user = useSelector((state) => state.user);
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLocalState({ type: "loading", payload: true });
-        const response = await getOrders({
-          userId: user.userId,
-          status: statusId,
-          keyword: keywords,
-          page: page,
-          limit: 5,
-        });
-        console.log(response);
-        if (response.statusCode === 200) {
-          setLocalState({ type: "totalPages", payload: response?.totalPages });
-          setLocalState({ type: "orders", payload: response?.data });
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLocalState({ type: "loading", payload: false });
-      }
-    };
 
+  const fetchOrders = async () => {
+    try {
+      setLocalState({ type: "loading", payload: true });
+      const response = await getOrders({
+        userId: user.userId,
+        status: statusId,
+        keyword: keywords,
+        page: page,
+        limit: 5,
+      });
+      console.log(response);
+      if (response.statusCode === 200) {
+        setLocalState({ type: "totalPages", payload: response?.totalPages });
+        setLocalState({ type: "orders", payload: response?.data });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLocalState({ type: "loading", payload: false });
+    }
+  };
+  useEffect(() => {
+    if (!user.userId) return;
     fetchOrders();
   }, [keywords, statusId, page, user.userId]);
 
@@ -80,7 +81,13 @@ const OrderContainer = () => {
           )}
           {localState?.orders?.length > 0 &&
             localState?.orders?.map((order, index) => {
-              return <OrderPrimaryItem key={index} order={order} />;
+              return (
+                <OrderPrimaryItem
+                  key={index}
+                  order={order}
+                  onUpdate={fetchOrders}
+                />
+              );
             })}
 
           <Pagination

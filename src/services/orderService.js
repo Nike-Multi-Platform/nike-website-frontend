@@ -20,3 +20,16 @@ export const getOrders = async (payload) => {
     console.error(error);
   }
 };
+
+export const writeReview = async (payload) => {
+  try {
+    const response = await axios.post(`${url}/write-review`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
