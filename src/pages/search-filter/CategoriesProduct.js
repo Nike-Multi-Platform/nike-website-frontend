@@ -5,7 +5,6 @@ import { searchFilter } from '../../services/productServices';
 import ProductCard from '../../components/products/ProductCard';
 import { Dropdown, Menu, Spin, Button } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { LuSettings2 } from "react-icons/lu";
 
 const CategoriesProduct = () => {
   const [localState, setLocalState] = useReducer(
@@ -99,14 +98,12 @@ const CategoriesProduct = () => {
   return (
     <div className="flex">
       {/* Sidebar Filter */}
-      {localState.sidebar_visible && (
         <div className="w-[20%] p-4 border-r border-gray-200 h-screen overflow-y-auto">
           <FilterSidebar />
         </div>
-      )}
 
       {/* Main Content */}
-      <div className={(localState.sidebar_visible ? 'w-[80%]' : 'w-[100%]') + ' p-4'}>
+      <div className='w-[80%] p-4'>
         <div className="flex justify-end mb-4">
           <Dropdown overlay={menu} trigger={['click']}>
             <Button className='text-lg font-nikeBody'>
