@@ -35,17 +35,29 @@ const ObjectFilter = () => {
     }, []);
 
     const handleCheckboxChange = (e, object) => {
-        console.log("Hello", object);
-        const isSelectedObject = localState.selected_objects.includes(object);
-        const updateObjects = isSelectedObject
-            ? localState.selected_objects.filter(object => object !== object)
-            : [...localState.selected_objects, object];
-        setLocalState({ type: 'selected_objects', payload: updateObjects });
+        if (localState.selected_objects.includes(object) && e.target.checked) {
+            return;
+        }
+        if (localState.selected_objects.includes(object) && !e.target.checked) {
+            const newSelectedObjects = localState.selected_objects.filter(
+                (selectedObject) => selectedObject !== object
+            );
+            setLocalState({ type: 'selected_objects', payload: newSelectedObjects });
+            return;
+        }
+        const newSelectedObjects = [...localState.selected_objects, object];
+        setLocalState({ type: 'selected_objects', payload: newSelectedObjects });
+    };
+
+    useEffect(() => {
+        // navigate to search page with selected objects
         const queryParams = new URLSearchParams(location.search);
         queryParams.delete('productObjectId');
-        updateObjects.forEach(object => queryParams.append('productObjectId', object.productId));
+        localState.selected_objects.forEach((object) => {
+            queryParams.append('productObjectId', object.productId);
+        });
         navigate(`${location.pathname}?${queryParams.toString()}`);
-    };
+    },[localState.selected_objects])
 
     return (
         <div className="ml-8">
