@@ -1,22 +1,15 @@
-import { Input, Menu, Skeleton } from "antd";
+import { Button, Input, Menu, Result, Skeleton } from "antd";
 import React, { lazy, Suspense, useEffect, useReducer } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import { getOrders, getStatuses } from "../../services/orderService";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import OrderStatuses from "../../components/order/OrderStatuses";
 
 const OrderContainer = lazy(() =>
   import("../../components/order/OrderContainer")
 );
-const orderStatuses = {
-  "Tất Cả": "All",
-  "Chờ xác nhận": "Pending Confirmation",
-  "Chờ lấy hàng": "Pending Pickup",
-  "Chờ giao hàng": "Pending Delivery",
-  "Hoàn Thành": "Completed",
-  "Đã Hủy": "Canceled",
-  "Trả Hàng/Hoàn Tiền": "Return/Refund",
-};
+
 const OrdersPage = () => {
   const [localState, setLocalState] = useReducer(
     (state, action) => {
@@ -31,8 +24,10 @@ const OrdersPage = () => {
     }
   );
   const navigate = useNavigate();
-  const statusId =
-    new URLSearchParams(window.location.search).get("statusId") || 0;
+  const statusId = parseInt(
+    new URLSearchParams(window.location.search).get("statusId") || 0
+  );
+  const user = useSelector((state) => state.user);
   useEffect(() => {
     const fetchStatuses = async () => {
       try {
@@ -58,45 +53,46 @@ const OrdersPage = () => {
     }
   };
   return (
-    <div className="max-w-[1400px] mx-auto my-20 flex flex-col gap-4">
-      <span className="text-3xl font-nike w-full text-center font-[600] text-neutral-700">
-        My Orders
-      </span>
-      <section className="w-full flex justify-between items-center  gap-2">
-        <Menu
-          className="w-full flex justify-center"
-          mode="horizontal"
-          selectedKeys={[statusId]}
-          items={localState.statuses.map((item) => ({
-            label: (
-              <span
-                onClick={() =>
-                  navigate(`/orders?statusId=${item.userOrderStatusId}`)
-                }
-                className="font-semibold text-xl"
-              >
-                {orderStatuses[item.userOrderStatusName]}
-              </span>
-            ),
-            key: item.userOrderStatusId,
-          }))}
-        />
+    <>
+      {!user?.userId && (
+        <div className="max-w-[1400px] mx-auto flex justify-center items-center flex-col">
+          <Result status={"error"} title="You are not logged in." />
+          <Button
+            size="large"
+            className="bg-red-500 text-white border-red-500 hover:opacity-80"
+            onClick={() => navigate("/login")}
+          >
+            Login Now
+          </Button>
+        </div>
+      )}
+      {user?.userId && (
+        <div className="max-w-[1400px] mx-auto my-20 flex flex-col gap-4">
+          <span className="text-3xl font-nike w-full text-center font-[600] text-neutral-700">
+            My Orders
+          </span>
+          <section className="w-full flex justify-between items-center  gap-2">
+            <OrderStatuses items={localState.statuses} selectedKey={statusId} />
 
-        <Input
-          // className="col-span-9"
-          size="large"
-          prefix={<SearchOutlined className="text-2xl text-neutral-400" />}
-          placeholder="Product Name/Order NO."
-          onChange={handleOnSearch}
-          onKeyDown={handleSubmitSearch}
-        />
-      </section>
-      <section className="w-full">
-        <Suspense fallback={<Skeleton.Node active={true} className="w-full" />}>
-          <OrderContainer />
-        </Suspense>
-      </section>
-    </div>
+            <Input
+              // className="col-span-9"
+              size="large"
+              prefix={<SearchOutlined className="text-2xl text-neutral-400" />}
+              placeholder="Product Name/Order NO."
+              onChange={handleOnSearch}
+              onKeyDown={handleSubmitSearch}
+            />
+          </section>
+          <section className="w-full">
+            <Suspense
+              fallback={<Skeleton.Node active={true} className="w-full" />}
+            >
+              <OrderContainer />
+            </Suspense>
+          </section>
+        </div>
+      )}
+    </>
   );
 };
 

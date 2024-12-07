@@ -1,11 +1,11 @@
 import React, { memo, useEffect, useReducer } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getOrders } from "../../services/orderService";
 import OrderPrimaryItem from "./OrderPrimaryItem";
 import { BiNote } from "react-icons/bi";
 import { MdOutlineEventNote } from "react-icons/md";
-import { Spin } from "antd";
+import { Pagination, Spin } from "antd";
 
 const OrderContainer = () => {
   const [localState, setLocalState] = useReducer(
@@ -19,6 +19,7 @@ const OrderContainer = () => {
     }
   );
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const statusId =
     new URLSearchParams(window.location.search).get("statusId") || 0;
   const page = new URLSearchParams(window.location.search).get("page") || 1;
@@ -34,7 +35,7 @@ const OrderContainer = () => {
           status: statusId,
           keyword: keywords,
           page: page,
-          limit: 10,
+          limit: 5,
         });
         console.log(response);
         if (response.statusCode === 200) {
@@ -50,6 +51,18 @@ const OrderContainer = () => {
 
     fetchOrders();
   }, [keywords, statusId, page, user.userId]);
+
+  const handlePageChange = (page, pageSize) => {
+    // Lấy toàn bộ searchParams hiện tại
+    const params = new URLSearchParams(searchParams);
+
+    // Cập nhật tham số "page"
+    params.set("page", page);
+
+    // Điều hướng đến URL mới
+    navigate(`?${params.toString()}`);
+  };
+
   return (
     <>
       {localState?.loading && (
@@ -58,7 +71,7 @@ const OrderContainer = () => {
         </div>
       )}
       {!localState?.loading && (
-        <div className="w-full flex flex-col gap-3 mt-8">
+        <div className="w-full flex flex-col gap-10 mt-8">
           {localState?.orders?.length === 0 && (
             <div className="flex h-[400px] justify-center items-center flex-col text-neutral-600">
               <MdOutlineEventNote size={50} />
@@ -69,6 +82,19 @@ const OrderContainer = () => {
             localState?.orders?.map((order, index) => {
               return <OrderPrimaryItem key={index} order={order} />;
             })}
+
+          <Pagination
+            size="large"
+            className="mt-4"
+            align="center"
+            defaultCurrent={page}
+            total={localState?.totalPages * 5}
+            showSizeChanger={false}
+            onChange={handlePageChange}
+            pageSize={10}
+            hideOnSinglePage={localState?.orders?.length <= 5 ? true : false}
+            current={page}
+          />
         </div>
       )}
     </>
