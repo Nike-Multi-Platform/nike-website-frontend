@@ -35,30 +35,34 @@ const ObjectFilter = () => {
     }, []);
 
     const handleCheckboxChange = (e, object) => {
-        if (localState.selected_objects.includes(object) && e.target.checked) {
-            return;
-        }
-        if (localState.selected_objects.includes(object) && !e.target.checked) {
-            const newSelectedObjects = localState.selected_objects.filter(
-                (selectedObject) => selectedObject !== object
-            );
-            setLocalState({ type: 'selected_objects', payload: newSelectedObjects });
-            return;
-        }
-        const newSelectedObjects = [...localState.selected_objects, object];
+        const isChecked = e.target.checked;
+        const newSelectedObjects = isChecked
+            ? [...localState.selected_objects, object]
+            : localState.selected_objects.filter(selectedObject => selectedObject !== object);
+
         setLocalState({ type: 'selected_objects', payload: newSelectedObjects });
-    };
 
-    useEffect(() => {
-        // navigate to search page with selected objects
+        // Update search query
         const queryParams = new URLSearchParams(location.search);
-        queryParams.delete('productObjectId');
-        localState.selected_objects.forEach((object) => {
-            queryParams.append('productObjectId', object.productId);
-        });
-        navigate(`${location.pathname}?${queryParams.toString()}`);
-    },[localState.selected_objects])
 
+        // Clear existing 'productObjectId' params
+        queryParams.delete('productObjectId');
+
+        // Append the selected productObjectIds
+        newSelectedObjects.forEach((selectedObject) => {
+            queryParams.append('productObjectId', selectedObject.productId);
+        });
+
+        navigate(`${location.pathname}?${queryParams.toString()}`);
+    };
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const selectedProductIds = queryParams.getAll('productObjectId');
+        const selectedObjects = localState.objects.filter(object =>
+            selectedProductIds.includes(String(object.productId))
+        );
+        setLocalState({ type: 'selected_objects', payload: selectedObjects });
+    }, [location.search, localState.objects]);
     return (
         <div className="ml-8">
             <div
@@ -74,10 +78,11 @@ const ObjectFilter = () => {
                 <div className="flex flex-col space-y-4">
                     {localState.objects.map((object, index) => (
                         <Checkbox
-                            key={index}
+                            key={index}  
                             onChange={(e) => handleCheckboxChange(e, object)}
                             className="text-lg font-nike"
-                        >
+                            checked={location.search.includes(`productObjectId=${object.productId}`)}
+                         >
                             {object.productName}
                         </Checkbox>
                     ))}

@@ -105,18 +105,12 @@ const CategoriesProduct = () => {
     <div className="max-w-[1600px] mx-auto my-20 flex gap-2 items-center">
       <div className="flex">
         {/* Sidebar Filter */}
-        {localState.sidebar_visible && (
           <div className="w-[20%] p-4 border-r border-gray-200 h-screen overflow-y-auto">
             <FilterSidebar />
           </div>
-        )}
 
         {/* Main Content */}
-        <div
-          className={
-            (localState.sidebar_visible ? "w-[80%]" : "w-[100%]") + " p-4"
-          }
-        >
+              <div className='w-[80%] p-4'>
           <div className="flex justify-end mb-4">
             <Dropdown overlay={menu} trigger={["click"]}>
               <Button className="text-lg font-nikeBody">

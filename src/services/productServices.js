@@ -125,3 +125,30 @@ export const getProductObjects = async () => {
     };
   }
 }
+
+export const getCategoriesByCatAndObject = async (categoryId, productObjectId) => {
+  const URL = url + "Category/subcategories-category-object";
+  try {
+    const response = await axios.get(URL, {
+      params: { categoryId: categoryId, productObjectId: productObjectId }
+    });
+    return response.data;
+  } catch (error) {
+    let errorMessage;
+    if (error.response) {
+      switch (error.response.status) {
+        case 404:
+          errorMessage = error.response.data.message;
+          break;
+        case 500:
+          errorMessage = "Server error.";
+          break;
+        default:
+          errorMessage =
+            error.response.data.message || "An unexpected error occurred.";
+      }
+    } else {
+      errorMessage = "Network error or server is unreachable.";
+    }
+  }
+}
