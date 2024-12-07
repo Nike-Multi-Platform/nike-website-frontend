@@ -74,7 +74,7 @@ const CheckoutPage = () => {
       voucher: null,
       voucherDiscount: 0,
       voucherText: "",
-      selectedPaymentMethod: "COD",
+      selectedPaymentMethod: "VNPAY",
     }
   );
   const { listProvince, listDistrict, listWard, error, data, selected } =
@@ -797,7 +797,13 @@ const CheckoutPage = () => {
                     onChange={onPaymentMethodChange}
                   >
                     {PaymentMethodArray.map((item) => (
-                      <Radio value={item.value} disabled={item.disabled}>
+                      <Radio
+                        value={item.value}
+                        disabled={
+                          (item.value === "COD" && totalPrice > 5000000) ||
+                          totalPrice === 0
+                        }
+                      >
                         <div className="w-full flex items-center gap-2">
                           <img src={item.image} alt="" className="w-11" />
                           <div className="flex flex-col">
