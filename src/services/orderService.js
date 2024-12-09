@@ -20,10 +20,33 @@ export const getOrders = async (payload) => {
     console.error(error);
   }
 };
+export const getDetails = async (payload) => {
+  try {
+    const response = await axios.get(
+      `${url}/get-details?userOrderId=${payload}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const writeReview = async (payload) => {
   try {
     const response = await axios.post(`${url}/write-review`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const sendRequest = async (payload) => {
+  try {
+    const response = await axios.post(`${url}/send-request`, payload, {
       headers: {
         "Content-Type": "application/json",
       },

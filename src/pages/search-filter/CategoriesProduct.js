@@ -103,14 +103,14 @@ const CategoriesProduct = () => {
   }, [location.search]);
   return (
     <div className="max-w-[1600px] mx-auto my-20 flex gap-2 items-center">
-      <div className="flex">
+      <div className="grid grid-cols-12">
         {/* Sidebar Filter */}
-          <div className="w-[20%] p-4 border-r border-gray-200 h-screen overflow-y-auto">
-            <FilterSidebar />
-          </div>
+        <div className="col-span-2 p-4 border-r border-gray-200 h-screen">
+          <FilterSidebar />
+        </div>
 
         {/* Main Content */}
-              <div className='w-[80%] p-4'>
+        <div className="col-span-10 p-4">
           <div className="flex justify-end mb-4">
             <Dropdown overlay={menu} trigger={["click"]}>
               <Button className="text-lg font-nikeBody">

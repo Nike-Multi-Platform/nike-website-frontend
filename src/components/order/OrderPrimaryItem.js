@@ -6,6 +6,8 @@ import { getImageByCloudinary } from "../../helpers/getImageByCloudinary";
 import { u } from "framer-motion/client";
 import { Button } from "antd";
 import ModalWriteReview from "../modals/ModalWriteReview";
+import ModalSendRequest from "../modals/ModalSendRequest";
+import { useNavigate } from "react-router-dom";
 
 const orderStatuses = {
   "Tất Cả": "All",
@@ -27,6 +29,7 @@ const statusColors = {
 
 const OrderPrimaryItem = (props) => {
   const { order, key, onUpdate } = props;
+  const navigate = useNavigate();
   const [localState, setLocalState] = useReducer(
     (state, action) => {
       return { ...state, [action.type]: action.payload };
@@ -57,6 +60,9 @@ const OrderPrimaryItem = (props) => {
       },
     });
   };
+  const handleViewOrderDetail = () => {
+    navigate(`/orders/details/${order.userOrderId}`);
+  };
 
   const renderButton = (userOrderStatusId) => {
     switch (userOrderStatusId) {
@@ -70,6 +76,7 @@ const OrderPrimaryItem = (props) => {
                 : ""
             } hover:opacity-80 text-lg w-[150px] h-[50px]`}
             disabled={order.isSendCancelRequest}
+            onClick={() => handleOpenModal("cancel-request")}
           >
             {order.isSendCancelRequest ? "Request sent" : "Cancel Request"}
           </Button>
@@ -79,13 +86,14 @@ const OrderPrimaryItem = (props) => {
           <Button
             size="large"
             className={`rounded-full ${
-              !order.isSendRefundRequest
+              !order.isSendCancelRequest
                 ? "bg-red-500 font-semibold text-white border-red-500"
                 : ""
             } hover:opacity-80 text-lg w-[150px] h-[50px]`}
-            disabled={order.isSendRefundRequest}
+            disabled={order.isSendCancelRequest}
+            onClick={() => handleOpenModal("cancel-request")}
           >
-            {order.isSendRefundRequest ? "Request sent" : "Cancel Request"}
+            {order.isSendCancelRequest ? "Request sent" : "Cancel Request"}
           </Button>
         );
 
@@ -100,6 +108,7 @@ const OrderPrimaryItem = (props) => {
                   : ""
               } hover:opacity-80 text-lg w-[150px] h-[50px]`}
               disabled={order.isSendRefundRequest}
+              onClick={() => handleOpenModal("refund-request")}
             >
               {order.isSendRefundRequest ? "Request sent" : "Return Request"}
             </Button>
@@ -133,6 +142,7 @@ const OrderPrimaryItem = (props) => {
       <div
         key={key}
         className="border-[1px] rounded-lg hover:shadow-lg  cursor-pointer"
+        onClick={handleViewOrderDetail}
       >
         <div className="p-6">
           <div className="flex items-center justify-between">
@@ -196,6 +206,7 @@ const OrderPrimaryItem = (props) => {
             <Button
               size="large"
               className="rounded-full bg-neutral-100 font-semibold text-black border-neutral-100 hover:opacity-80 text-lg w-[150px] h-[50px]"
+              onClick={handleViewOrderDetail}
             >
               Details
             </Button>
@@ -209,6 +220,18 @@ const OrderPrimaryItem = (props) => {
           localState?.modal.type === "review" ? localState.modal.visible : false
         }
         onUpdate={onUpdate}
+        onClose={handleCloseModal}
+      />
+      <ModalSendRequest
+        order={order}
+        onUpdate={onUpdate}
+        openModal={
+          localState?.modal.type === "cancel-request" ||
+          localState?.modal.type === "refund-request"
+            ? localState.modal.visible
+            : false
+        }
+        type={localState?.modal.type}
         onClose={handleCloseModal}
       />
     </>

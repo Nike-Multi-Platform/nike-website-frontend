@@ -37,7 +37,11 @@ const NewRelease = () => {
             </span>
             <span
               className="text-neutral-500 font-semibold cursor-pointer"
-              onClick={() => navigate("/categories?SortBy=createAt")}
+              onClick={() =>
+                navigate(
+                  "/categories?SortBy=createAt&productObjectId=1&productObjectId=2&productObjectId=3"
+                )
+              }
             >
               See All
             </span>

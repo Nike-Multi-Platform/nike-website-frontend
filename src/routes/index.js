@@ -10,7 +10,9 @@ const CheckoutResultPage = lazy(() =>
   import("../pages/cart/CheckoutResultPage")
 );
 const CheckoutPage = lazy(() => import("../pages/cart/CheckoutPage"));
-const CategoriesProduct = lazy(() => import("../pages/search-filter/CategoriesProduct"));
+const CategoriesProduct = lazy(() =>
+  import("../pages/search-filter/CategoriesProduct")
+);
 const FavoritePage = lazy(() => import("../pages/favorites/FavoritePage"));
 const CartPage = lazy(() => import("../pages/cart/CartPage"));
 const DetailProduct = lazy(() => import("../pages/products/DetailProduct"));
@@ -216,24 +218,23 @@ const router = createBrowserRouter([
             </Suspense>
           </AuthLayout>
         ),
-        children: [
-          {
-            path: "details/:order_id",
-            element: (
-              <AuthLayout>
-                <Suspense
-                  fallback={
-                    <div className="w-full flex justify-center items-center">
-                      <Spin size="large" />
-                    </div>
-                  }
-                >
-                  <OrderDetailPage />
-                </Suspense>
-              </AuthLayout>
-            ),
-          },
-        ],
+        children: [],
+      },
+      {
+        path: "/orders/details/:order_id",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <OrderDetailPage />
+            </Suspense>
+          </AuthLayout>
+        ),
       },
       //Add more routes here
     ],
