@@ -6,6 +6,7 @@ import moment from "moment-timezone";
 import { Carousel } from "antd";
 import { getImageByCloudinary } from "../../helpers/getImageByCloudinary";
 import ProductFlashSaleCard from "../products/ProductFlashSaleCard";
+import { useNavigate } from "react-router-dom";
 
 const FlashSaleSection = () => {
   const [localState, setLocalState] = useReducer(
@@ -20,6 +21,7 @@ const FlashSaleSection = () => {
       },
     }
   );
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFlashSale = async () => {
@@ -54,6 +56,7 @@ const FlashSaleSection = () => {
             },
           });
         }
+
         setLocalState({
           type: "flashSales",
           payload: res.data,
@@ -100,7 +103,14 @@ const FlashSaleSection = () => {
                   renderMap={[false, true, true, true]}
                 />
               </div>
-              <span className="text-neutral-500 font-semibold cursor-pointer">
+              <span
+                className="text-neutral-500 font-semibold cursor-pointer"
+                onClick={() =>
+                  navigate(
+                    `/flash-sales?flashSaleTimeFrameId=${localState?.flashSales?.flashSaleTimeFrameId}`
+                  )
+                }
+              >
                 See All
               </span>
             </div>

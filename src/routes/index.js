@@ -5,6 +5,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { Spin } from "antd";
 import OrderDetailPage from "../pages/orders/OrderDetailPage";
 
+const FlashSalePage = lazy(() => import("../pages/flashSale/FlashSalePage"));
 const OrdersPage = lazy(() => import("../pages/orders/OrdersPage"));
 const CheckoutResultPage = lazy(() =>
   import("../pages/cart/CheckoutResultPage")
@@ -248,6 +249,22 @@ const router = createBrowserRouter([
               }
             >
               <OrderDetailPage />
+            </Suspense>
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/flash-sales",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <FlashSalePage />
             </Suspense>
           </AuthLayout>
         ),

@@ -1,12 +1,13 @@
 import React, { memo, useEffect, useReducer } from "react";
 import HamanLogo from "../../assets/HamansLogo.png";
-import { Input, Tag } from "antd";
+import { Input, Tag, Upload } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   getHistorySearch,
   saveHistorySearch,
 } from "../../services/userService";
+import { FaCameraRetro } from "react-icons/fa";
 
 const { Search } = Input;
 
@@ -93,7 +94,7 @@ const DrawerSearchContent = (props) => {
         <div className="col-span-3">
           <img src={HamanLogo} alt="Logo" className="w-40" />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-6 flex items-center gap-4">
           <Search
             size="large"
             placeholder="Search"
@@ -102,6 +103,14 @@ const DrawerSearchContent = (props) => {
             onChange={onTextChange}
             onSearch={onSearch}
           />
+          <Upload {...props}>
+            <div
+              className="p-3 flex justify-center items-center border-[1px] rounded-lg cursor-pointer"
+              title="Upload Photo to Search"
+            >
+              <FaCameraRetro className="text-blue-500" />
+            </div>
+          </Upload>
         </div>
         <div className="col-span-3 flex justify-end">
           <span

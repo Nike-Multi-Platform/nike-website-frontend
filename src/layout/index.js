@@ -5,6 +5,7 @@ import { LogoutUser, verifyUser } from "../services/userService";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, logout } from "../redux/userSlice";
 import { clearCart } from "../redux/cartSlice";
+import Footer from "../components/headers/Footer";
 
 const AuthLayout = ({ children }) => {
   const location = useLocation();
@@ -69,6 +70,7 @@ const AuthLayout = ({ children }) => {
     <>
       <Header />
       {children}
+      <Footer />
     </>
   );
 };
