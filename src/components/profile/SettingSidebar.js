@@ -3,9 +3,15 @@ import React, { useState } from 'react';
 import { BiUser } from 'react-icons/bi';
 import { SlWallet } from "react-icons/sl";
 import { useNavigate } from 'react-router-dom';
+import { RiLockPasswordLine } from "react-icons/ri";
+import { useSelector } from 'react-redux';
 const SettingSidebar = ({ index }) => {
     const [selectedKey, setSelectedKey] = useState(index);
+    const user = useSelector((state) => state.user);
     const navigate = useNavigate();
+    const [userLoaded, setUserLoaded] = useState(false);
+
+
     const items = [
         {
             key: 'account-details',
@@ -17,7 +23,7 @@ const SettingSidebar = ({ index }) => {
                     Account Details
                 </span>
             ),
-            icon: <BiUser />,
+            icon: <BiUser size={20}/>,
         },
         {
             key: 'wallet',
@@ -29,16 +35,31 @@ const SettingSidebar = ({ index }) => {
                     Wallet
                 </span>
             ),
-            icon: <SlWallet />,
+            icon: <SlWallet size={20} />,
         },
+        {
+            key: 'change-password',
+            label: (
+                <span
+                    className={`${selectedKey === 'change-password' ? 'text-gray-500' : 'text-black'
+                        } font-nike`}
+                >
+                    Change Password
+                </span>
+            ),
+            icon: <RiLockPasswordLine size={20} />,
+        }
     ];
     const handleSelect = ({ key }) => {
         setSelectedKey(key);
-        if(key === 'account-details') {
+        if (key === 'account-details') {
             navigate('/account-setting');
         }
-        if(key === 'wallet') {
+        if (key === 'wallet') {
             navigate('/user-wallet');
+        }
+        if (key === 'change-password') {
+            navigate('/change-password');
         }
     };
     return (

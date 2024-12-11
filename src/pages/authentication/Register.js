@@ -104,7 +104,7 @@ const Register = () => {
     if (data.firstName === "") {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "firstName", value: "Tên không được để trống" },
+        payload: { name: "firstName", value: "First name is required" },
       });
     } else {
       dispatch({
@@ -117,7 +117,7 @@ const Register = () => {
     if (data.lastName === "") {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "lastName", value: "Họ không được để trống" },
+        payload: { name: "lastName", value: "Last name is required" },
       });
     } else {
       dispatch({
@@ -130,12 +130,12 @@ const Register = () => {
     if (data.email === "") {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "email", value: "Email không được để trống" },
+        payload: { name: "email", value: "Email is required" },
       });
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "email", value: "Email không hợp lệ" },
+        payload: { name: "email", value: "Invalid email" },
       });
     } else {
       dispatch({
@@ -150,7 +150,7 @@ const Register = () => {
         type: "SET_ERROR",
         payload: {
           name: "phoneNumber",
-          value: "Số điện thoại không được để trống",
+          value: "Phone number is required",
         },
       });
     } else if (data.phoneNumber.length === 10 && checkPhoneNumber !== "") {
@@ -172,7 +172,7 @@ const Register = () => {
     if (data.gender === "") {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "gender", value: "Giới tính không được để trống" },
+        payload: { name: "gender", value: "Gender is required" },
       });
     } else {
       dispatch({
@@ -185,14 +185,14 @@ const Register = () => {
     if (data.password === "") {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "password", value: "Mật khẩu không được để trống" },
+        payload: { name: "password", value: "Password is required" },
       });
     } else if (data.password.length > 0 && data.password.length < 6) {
       dispatch({
         type: "SET_ERROR",
         payload: {
           name: "password",
-          value: "Mật khẩu phải có ít nhất 6 ký tự",
+          value: "Password must be at least 6 characters",
         },
       });
     } else {
@@ -208,7 +208,7 @@ const Register = () => {
         type: "SET_ERROR",
         payload: {
           name: "retypePassword",
-          value: "Nhập lại mật khẩu không được để trống",
+          value: "Retype password is required",
         },
       });
     } else {
@@ -222,11 +222,11 @@ const Register = () => {
     if (data.password !== data.retypePassword) {
       dispatch({
         type: "SET_ERROR",
-        payload: { name: "retypePassword", value: "Mật khẩu không khớp" },
+        payload: { name: "retypePassword", value: "Password does not match" },
       });
     }
   }, [data]);
-  document.title = "Đăng Ký";
+  document.title = "Register";
 
 
   const handleOnSubmit = async () => {
@@ -234,17 +234,17 @@ const Register = () => {
 
     // Validate firstName
     if (!data.firstName) {
-      errors.firstName = "Tên không được để trống";
+      errors.firstName = "First name is required";
     }
 
     // Validate lastName
     if (!data.lastName) {
-      errors.lastName = "Họ không được để trống";
+      errors.lastName = "Last name is required";
     }
 
     // Validate email
     if (!data.email) {
-      errors.email = "Email không được để trống";
+      errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       errors.email = "Email không hợp lệ";
     }
@@ -252,28 +252,28 @@ const Register = () => {
     // Validate phoneNumber
     const checkPhoneNumber = checkNumberPhone(data.phoneNumber);
     if (!data.phoneNumber) {
-      errors.phoneNumber = "Số điện thoại không được để trống";
+      errors.phoneNumber = "Phone number is required";
     } else if (data.phoneNumber.length !== 10 || checkPhoneNumber !== "") {
-      errors.phoneNumber = checkPhoneNumber || "Số điện thoại không hợp lệ";
+      errors.phoneNumber = checkPhoneNumber || "Invalid phone number";
     }
 
     // Validate gender
     if (!data.gender) {
-      errors.gender = "Giới tính không được để trống";
+      errors.gender = "Gender is required";
     }
 
     // Validate password
     if (!data.password) {
-      errors.password = "Mật khẩu không được để trống";
+      errors.password = "Password is required";
     } else if (data.password.length < 6) {
-      errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+      errors.password = "Password must be at least 6 characters";
     }
 
     // Validate retypePassword
     if (!data.retypePassword) {
-      errors.retypePassword = "Nhập lại mật khẩu không được để trống";
+      errors.retypePassword = "Retype password is required";
     } else if (data.password !== data.retypePassword) {
-      errors.retypePassword = "Mật khẩu không khớp";
+      errors.retypePassword = "Password does not match";
     }
 
     // Update errors in state
@@ -311,10 +311,10 @@ const Register = () => {
         message.success(res?.message);
         navigate("/login");
       } else {
-        message.error(res?.message || "Đã xảy ra lỗi khi đăng ký");
+        message.error(res?.message || "Error when registering");
       }
     } catch (error) {
-      message.error("Đã xảy ra lỗi khi đăng ký");
+      message.error("Error when registering");
       console.error("Error when registering:", error);
     } finally {
       dispatch({

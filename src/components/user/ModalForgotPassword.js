@@ -14,6 +14,8 @@ const ModalForgotPassword = (props) => {
           return { ...state, error: action.value };
         case "warning":
           return { ...state, warning: action.value };
+        case "loading":
+          return { ...state, loading: action.value };
         default:
           return state;
       }
@@ -41,8 +43,7 @@ const ModalForgotPassword = (props) => {
     }
   };
 
-  const onSubmitReset = async (e) => {
-    e.preventDefault();
+  const onSubmitReset = async () => {
     if (!emailReset) {
       dispatch({ type: "error", value: "Please enter a valid email" });
       return;

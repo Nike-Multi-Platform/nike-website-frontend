@@ -21,7 +21,7 @@ const Login = lazy(() => import("../pages/authentication/Login"));
 const Register = lazy(() => import("../pages/authentication/Register"));
 const AccountSetting = lazy(() => import("../pages/profile/AccountSetting"));
 const UserWallet = lazy(() => import("../pages/profile/UserWallet"));
-
+const ChangePassword = lazy(() => import("../pages/profile/ChangePassword"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -119,6 +119,22 @@ const router = createBrowserRouter([
               }
             >
               <UserWallet />
+            </Suspense>
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/change-password",
+        element: (
+          <AuthLayout>
+            <Suspense
+              fallback={
+                <div className="w-full flex justify-center items-center">
+                  <Spin size="large" />
+                </div>
+              }
+            >
+              <ChangePassword />
             </Suspense>
           </AuthLayout>
         ),
