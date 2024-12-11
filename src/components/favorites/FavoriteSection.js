@@ -1,11 +1,12 @@
-import { Button, Result } from "antd";
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { memo, useCallback, useEffect, useReducer } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getFavorites } from "../../services/favoriteService";
-import FavoriteItem from "../../components/favorites/FavoriteItem";
+import FavoriteItem from "./FavoriteItem";
+import { Button } from "antd";
+import FavoriteMiniItem from "./FavoriteMiniItem";
 
-const FavoritePage = () => {
+const FavoriteSection = () => {
   const [localState, setLocalState] = useReducer(
     (state, action) => {
       return { ...state, [action.type]: action.payload };
@@ -22,7 +23,7 @@ const FavoritePage = () => {
   const fetchFavorites = useCallback(async () => {
     try {
       setLocalState({ type: "loading", payload: true });
-      const res = await getFavorites(user.userId, localState?.page, 10);
+      const res = await getFavorites(user.userId, localState?.page, 4);
       if (res.statusCode === 200) {
         const newFavorites = [...localState?.favorites, ...res.data];
         setLocalState({ type: "favorites", payload: newFavorites });
@@ -45,7 +46,7 @@ const FavoritePage = () => {
   }, [localState?.page]);
 
   return (
-    <div className="max-w-[1400px] mx-auto my-10">
+    <div className=" my-10">
       {user?.userId && (
         <>
           <span className="text-2xl font-semibold">Favourites</span>
@@ -56,7 +57,11 @@ const FavoritePage = () => {
           )}
           <div className="grid grid-cols-12 gap-6 my-4">
             {localState?.favorites?.map((item, key) => (
-              <FavoriteItem item={item} key={key} onUpdate={fetchFavorites} />
+              <FavoriteMiniItem
+                item={item}
+                key={key}
+                onUpdate={fetchFavorites}
+              />
             ))}
           </div>
           {localState?.page < localState?.totalPages && (
@@ -72,20 +77,8 @@ const FavoritePage = () => {
           )}
         </>
       )}
-      {!user?.userId && (
-        <div className="max-w-[1400px] mx-auto flex justify-center items-center flex-col">
-          <Result status={"error"} title="You are not logged in." />
-          <Button
-            size="large"
-            className="bg-red-500 text-white border-red-500 hover:opacity-80"
-            onClick={() => navigate("/login")}
-          >
-            Login Now
-          </Button>
-        </div>
-      )}
     </div>
   );
 };
 
-export default FavoritePage;
+export default memo(FavoriteSection);

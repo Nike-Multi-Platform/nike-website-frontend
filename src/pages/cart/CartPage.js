@@ -5,6 +5,7 @@ import { fetchBag } from "../../redux/cartSlice";
 import { Button, Result } from "antd";
 import RecommendationCarousel from "../../components/products/RecommendationCarousel";
 import { useNavigate } from "react-router-dom";
+import FavoriteSection from "../../components/favorites/FavoriteSection";
 
 const CartPage = () => {
   const user = useSelector((state) => state.user);
@@ -110,6 +111,9 @@ const CartPage = () => {
               >
                 Checkout
               </Button>
+            </div>
+            <div className="col-span-12">
+              <FavoriteSection />
             </div>
           </div>
           <div className="max-w-[1400px] mx-auto my-14">

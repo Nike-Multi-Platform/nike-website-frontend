@@ -253,14 +253,15 @@ export const resetPassword = async (email) => {
 
 export const saveHistorySearch = async (payload) => {
   try {
-    const url = URL + "save-search";
-    const response = await axios.post(url, payload);
+    const url = `${URL}save-search?userId=${
+      payload.userId
+    }&keyword=${encodeURIComponent(payload.keyword)}`;
+    const response = await axios.post(url); // Không cần payload trong body
     return response.data;
   } catch (error) {
     console.log("Error when save history search", error);
   }
 };
-
 export const getHistorySearch = async (userId) => {
   try {
     const url = URL + `get-histories-search?UserId=${userId}`;

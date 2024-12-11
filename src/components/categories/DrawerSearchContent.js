@@ -1,13 +1,17 @@
-import React, { memo, useReducer } from "react";
+import React, { memo, useEffect, useReducer } from "react";
 import HamanLogo from "../../assets/HamansLogo.png";
 import { Input, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import {
+  getHistorySearch,
+  saveHistorySearch,
+} from "../../services/userService";
 
 const { Search } = Input;
 
 const DrawerSearchContent = (props) => {
-  const { onClose } = props;
+  const { onClose, open } = props;
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -17,6 +21,7 @@ const DrawerSearchContent = (props) => {
     },
     {
       searchText: "",
+      searchHistories: [],
     }
   );
 
@@ -26,25 +31,24 @@ const DrawerSearchContent = (props) => {
     setLocalState({ type: "searchText", payload: text });
   };
 
-  const saveHistorySearch = async (searchText) => {
+  const saveSearch = async (searchText) => {
     try {
       const res = await saveHistorySearch({
         userId: user.userId,
         keyword: searchText,
       });
-      console.log(res.message);
     } catch (error) {
       console.error(error);
     }
   };
 
   // Khi nhấn nút tìm kiếm
-  const onSearch = (value) => {
+  const onSearch = async (value) => {
     const searchText = value || localState.searchText;
     navigate(`/categories?searchText=${encodeURIComponent(searchText)}`);
     onClose();
     if (user?.userId && searchText.trim() !== "") {
-      saveHistorySearch(searchText);
+      await saveSearch(searchText);
     }
   };
 
@@ -67,6 +71,21 @@ const DrawerSearchContent = (props) => {
       searchText: "Pants",
     },
   ];
+
+  useEffect(() => {
+    const fetchHistorySearch = async () => {
+      try {
+        const res = await getHistorySearch(user?.userId);
+        console.log(res);
+        setLocalState({ type: "searchHistories", payload: res.data });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (user?.userId && open) {
+      fetchHistorySearch();
+    }
+  }, [user?.userId, open]);
 
   return (
     <div className="p-4">
@@ -96,21 +115,25 @@ const DrawerSearchContent = (props) => {
       <div className="w-full grid grid-cols-12 items-center mt-4">
         <div className="col-span-3"></div>
         <div className="col-span-6 flex flex-col gap-2">
-          <span className="text-neutral-700 font-semibold text-lg">
-            Search History
-          </span>
-          <div className="flex gap-2">
-            {searchHistory.map((history) => (
-              <Tag
-                key={history.id}
-                color="#f50"
-                className="cursor-pointer"
-                onClick={() => handleTagClick(history.searchText)}
-              >
-                {history.searchText}
-              </Tag>
-            ))}
-          </div>
+          {localState?.searchHistories?.length > 0 && (
+            <>
+              <span className="text-neutral-700 font-semibold text-lg">
+                Search History
+              </span>
+              <div className="flex gap-2">
+                {localState?.searchHistories?.map((history) => (
+                  <Tag
+                    key={history.id}
+                    color="#f50"
+                    className="cursor-pointer"
+                    onClick={() => handleTagClick(history.textSearch)}
+                  >
+                    {history.textSearch}
+                  </Tag>
+                ))}
+              </div>
+            </>
+          )}
         </div>
         <div className="col-span-3"></div>
       </div>
