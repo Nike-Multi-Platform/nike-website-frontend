@@ -2,11 +2,13 @@ import React, { memo, useReducer } from "react";
 import HamanLogo from "../../assets/HamansLogo.png";
 import { Input, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const { Search } = Input;
 
 const DrawerSearchContent = (props) => {
   const { onClose } = props;
+  const user = useSelector((state) => state.user);
   const navigate = useNavigate();
 
   const [localState, setLocalState] = useReducer(
@@ -24,10 +26,26 @@ const DrawerSearchContent = (props) => {
     setLocalState({ type: "searchText", payload: text });
   };
 
+  const saveHistorySearch = async (searchText) => {
+    try {
+      const res = await saveHistorySearch({
+        userId: user.userId,
+        keyword: searchText,
+      });
+      console.log(res.message);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // Khi nhấn nút tìm kiếm
   const onSearch = (value) => {
     const searchText = value || localState.searchText;
     navigate(`/categories?searchText=${encodeURIComponent(searchText)}`);
+    onClose();
+    if (user?.userId && searchText.trim() !== "") {
+      saveHistorySearch(searchText);
+    }
   };
 
   // Gợi ý từ lịch sử tìm kiếm

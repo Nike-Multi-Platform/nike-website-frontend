@@ -208,7 +208,7 @@ const OrderDetailPage = () => {
           </>
         );
       default:
-        if (userOrderStatusId !== 5) {
+        if (userOrderStatusId !== 6 && userOrderStatusId !== 5) {
           return (
             <button className="bg-blue-500 text-white rounded-lg px-4 py-2">
               Cancel Order
@@ -216,6 +216,176 @@ const OrderDetailPage = () => {
           );
         }
         return null; // Không render button nếu statusId là 6
+    }
+  };
+  const renderTable = (userOrderStatusId) => {
+    if (userOrderStatusId !== 5 && userOrderStatusId !== 6) {
+      return (
+        <>
+          <tr>
+            <td className="table-item">Total Price</td>
+            <td className="table-item">
+              <sup>đ</sup>
+              {localState.orderDetails?.totalPrice?.toLocaleString("vi-vn")}
+            </td>
+          </tr>
+          <tr>
+            <td className="table-item">Shipping fee</td>
+            <td className="table-item">
+              {" "}
+              <sup>đ</sup>
+              {localState.orderDetails?.shippingFee?.toLocaleString("vi-vn")}
+            </td>
+          </tr>
+
+          <tr>
+            <td className="table-item">Voucher from Hamans</td>
+            <td className="table-item">
+              - <sup>đ</sup>
+              {localState.orderDetails?.discountPrice?.toLocaleString("vi-vn")}
+            </td>
+          </tr>
+          <tr>
+            <td className="table-item">Final Price</td>
+            <td className="table-item text-2xl text-primary">
+              <sup>đ</sup>
+              {localState.orderDetails?.finalPrice?.toLocaleString("vi-vn")}
+            </td>
+          </tr>
+
+          <tr>
+            <td className="table-item">Payment Methods</td>
+            <td className="table-item text-xl text-primary">
+              {localState.orderDetails?.paymentMethod}
+            </td>
+          </tr>
+        </>
+      );
+    } else if (userOrderStatusId === 5 || userOrderStatusId === 6) {
+      return (
+        <>
+          <tr>
+            <td className="table-item">Cancel by</td>
+            <td className="table-item">
+              {localState.orderDetails?.isCanceledBy === 0
+                ? "System"
+                : "Seller"}
+            </td>
+          </tr>
+          <tr>
+            <td className="table-item">Payment Methods</td>
+            <td className="table-item text-xl text-primary">
+              {localState.orderDetails?.paymentMethod}
+            </td>
+          </tr>
+        </>
+      );
+    }
+    if (
+      localState?.orderDetails?.isCanceledBy === 1 &&
+      localState?.orderDetails?.paymentMethod === "VNPAY"
+    ) {
+      return (
+        <>
+          <tr>
+            <td className="table-item">Refund amount</td>
+            <td className="table-item text-primary text-xl">
+              <sup>đ</sup>
+              {localState.orderDetails?.finalPrice?.toLocaleString("vi-vn")}
+            </td>
+          </tr>
+          <tr>
+            <td className="table-item">Refund on</td>
+            <td className="table-item">Hamans Wallet</td>
+          </tr>
+        </>
+      );
+    }
+  };
+  const renderStatus = (userOrderStatusId) => {
+    if (userOrderStatusId !== 5 && userOrderStatusId !== 6) {
+      <div className="bg-white p-5 rounded">
+        <Steps
+          items={[
+            {
+              title: <span className="text-lg">Order</span>,
+              description: (
+                <span className="text-neutral-500">
+                  {formatDate(
+                    localState.orderDetails?.createdAt,
+                    "dd/MM/yyyy HH:mm:ss"
+                  )}
+                </span>
+              ),
+              status: "finish",
+              icon: <CgNotes className="text-3xl" />,
+            },
+            {
+              title: (
+                <span className="text-lg">
+                  Delivered to the Service Provider
+                </span>
+              ),
+              description:
+                localState.orderDetails?.serviceLogs?.logs &&
+                localState.orderDetails?.serviceLogs?.logs.find(
+                  (item) => item.status === "picked"
+                ) &&
+                formatDate(
+                  localState.orderDetails?.serviceLogs?.logs.find(
+                    (item) => item.status === "picked"
+                  )?.timestamp,
+                  "dd/MM/yyyy HH:mm:ss"
+                ),
+              status:
+                localState.orderDetails?.serviceLogs?.logs &&
+                localState.orderDetails?.serviceLogs?.logs.some(
+                  (item) => item.status === "picked"
+                )
+                  ? "finish"
+                  : "wait",
+              icon: <MdLocalShipping className="text-4xl" />,
+            },
+            {
+              title: <span className="text-lg">Waiting for Delivery</span>,
+              description: "",
+              status:
+                localState.orderDetails?.userOrderStatusId === 4 ||
+                localState.orderDetails?.userOrderStatusId === 5
+                  ? "finish"
+                  : "wait",
+              icon: <HiInboxArrowDown className="text-3xl" />,
+            },
+            {
+              title: <span className="text-lg">Evaluate</span>,
+              description: "",
+              status:
+                localState.orderDetails?.isReviewed === 1 ? "finish" : "wait",
+              icon: <FaRegStar className="text-3xl " />,
+            },
+          ]}
+        />
+      </div>;
+    } else if (userOrderStatusId === 5 || userOrderStatusId === 6) {
+      return (
+        <div className="rounded-lg border-[1px] p-4 mt-4  bg-red-500 flex flex-col">
+          <span className="text-xl text-white">
+            Processed by{" "}
+            {localState.orderDetails?.isCanceledBy === 0 ? "System " : "Seller"}
+            at{" "}
+            {formatDate(
+              localState.orderDetails?.updatedAt,
+              "dd/MM/yyyy HH:mm:ss"
+            )}
+          </span>
+          <span className="text-xl text-white">
+            {userOrderStatusId === 6 &&
+              `Refund ${localState.orderDetails?.finalPrice?.toLocaleString(
+                "vi-vn"
+              )} VNĐ to Hamans wallet`}
+          </span>
+        </div>
+      );
     }
   };
   return (
@@ -259,70 +429,8 @@ const OrderDetailPage = () => {
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded">
-            <Steps
-              items={[
-                {
-                  title: <span className="text-lg">Order</span>,
-                  description: (
-                    <span className="text-neutral-500">
-                      {formatDate(
-                        localState.orderDetails?.createdAt,
-                        "dd/MM/yyyy HH:mm:ss"
-                      )}
-                    </span>
-                  ),
-                  status: "finish",
-                  icon: <CgNotes className="text-3xl" />,
-                },
-                {
-                  title: (
-                    <span className="text-lg">
-                      Delivered to the Service Provider
-                    </span>
-                  ),
-                  description:
-                    localState.orderDetails?.serviceLogs?.logs &&
-                    localState.orderDetails?.serviceLogs?.logs.find(
-                      (item) => item.status === "picked"
-                    ) &&
-                    formatDate(
-                      localState.orderDetails?.serviceLogs?.logs.find(
-                        (item) => item.status === "picked"
-                      )?.timestamp,
-                      "dd/MM/yyyy HH:mm:ss"
-                    ),
-                  status:
-                    localState.orderDetails?.serviceLogs?.logs &&
-                    localState.orderDetails?.serviceLogs?.logs.some(
-                      (item) => item.status === "picked"
-                    )
-                      ? "finish"
-                      : "wait",
-                  icon: <MdLocalShipping className="text-4xl" />,
-                },
-                {
-                  title: <span className="text-lg">Waiting for Delivery</span>,
-                  description: "",
-                  status:
-                    localState.orderDetails?.userOrderStatusId === 4 ||
-                    localState.orderDetails?.userOrderStatusId === 5
-                      ? "finish"
-                      : "wait",
-                  icon: <HiInboxArrowDown className="text-3xl" />,
-                },
-                {
-                  title: <span className="text-lg">Evaluate</span>,
-                  description: "",
-                  status:
-                    localState.orderDetails?.isReviewed === 1
-                      ? "finish"
-                      : "wait",
-                  icon: <FaRegStar className="text-3xl " />,
-                },
-              ]}
-            />
-          </div>
+          {renderStatus(localState.orderDetails?.userOrderStatusId)}
+
           <div className="w-full flex justify-end items-center gap-2">
             {renderButton(localState.orderDetails?.userOrderStatusId)}
           </div>
@@ -395,11 +503,16 @@ const OrderDetailPage = () => {
               </div>
             )}
           <section className="flex flex-col gap-3 my-7">
-            <span className="text-2xl font-semibold text-neutral-600">
+            <span className="text-2xl font-semibold text-neutral-600 mb-2">
               Order details
             </span>
             {localState.orderDetails?.userOrderItems?.map((item, index) => (
-              <div className="flex gap-2 rounded-lg border-[1px]">
+              <div
+                className="flex gap-2 rounded-lg border-[1px] cursor-pointer"
+                onClick={() =>
+                  navigate(`/detail-product/${item?.productParentId}`)
+                }
+              >
                 <img
                   src={getImageByCloudinary(item?.thumbnail)}
                   alt=""
@@ -422,7 +535,7 @@ const OrderDetailPage = () => {
           </section>
 
           {localState.orderDetails?.paymentMethod === "COD" && (
-            <div className="p-5 border-primary bg-third text-primary">
+            <div className="p-5 border-[1px] bg-slate-50 text-red-500">
               Please pay{" "}
               <span className="text-xl font-semibold">
                 <sup>đ</sup>
@@ -433,6 +546,9 @@ const OrderDetailPage = () => {
               upon receipt.
             </div>
           )}
+          <table className="bg-white border-collapse">
+            {renderTable(localState.orderDetails?.userOrderStatusId)}
+          </table>
         </div>
       )}
       <ModalWriteReview

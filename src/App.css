@@ -131,3 +131,6 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #555; /* Màu khi hover */
 }
+.table-item {
+  @apply border-[1px] text-right p-2 text-slate-500;
+}

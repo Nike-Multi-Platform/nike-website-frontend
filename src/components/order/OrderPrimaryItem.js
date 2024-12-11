@@ -127,7 +127,7 @@ const OrderPrimaryItem = (props) => {
           </>
         );
       default:
-        if (userOrderStatusId !== 5) {
+        if (userOrderStatusId !== 5 && userOrderStatusId !== 6) {
           return (
             <button className="bg-blue-500 text-white rounded-lg px-4 py-2">
               Cancel Order
