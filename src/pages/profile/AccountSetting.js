@@ -1,10 +1,8 @@
 import React, { useEffect, useReducer } from "react";
 import { Form, Input, Button, Upload, Spin, Select, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
 import SettingSidebar from "../../components/profile/SettingSidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { RiImageAddFill } from "react-icons/ri";
 import { checkNumberPhone } from "../../helpers/formatPhoneNumber";
 import { updateProfile, verifyUser } from "../../services/userService";
 import { logout, setUser } from "../../redux/userSlice";
@@ -54,25 +52,9 @@ const AccountSetting = () => {
         userFirstName: "",
         userLastName: "",
       },
-      touched: false,
       loading: false,
     }
   );
-
-  const uploadProps = {
-    fileList: localState.imageUrl.map((url) => ({
-      uid: url,
-      name: "image.png",
-      status: "done",
-      url,
-    })),
-    onChange: ({ fileList }) => {
-      const updatedUrls = fileList.map(
-        (file) => file.url || file.response?.url
-      );
-      setLocalState({ imageUrl: updatedUrls });
-    },
-  };
 
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -146,13 +128,8 @@ const AccountSetting = () => {
   const handleOnChange = (name, value) => {
     const hasErrors = validate(name, value);
     setLocalState({
-      touched: true,
       disable: hasErrors,
     });
-  };
-
-  const onFinish = (values) => {
-    console.log("Form values:", values);
   };
 
   useEffect(() => {
@@ -200,29 +177,9 @@ const AccountSetting = () => {
           <Form
             form={form}
             layout="vertical"
-            onFinish={onFinish}
             className="mt-4 w-2/4"
             loading={localState.loading}
           >
-            {/* <Form.Item
-              name="photo"
-              valuePropName="fileList"
-              help={localState.error.imageUrl}
-              validateStatus={localState.error.imageUrl ? 'error' : ''}
-            >
-              <Upload
-                {...uploadProps}
-                name="avatar"
-                listType="picture-circle"
-                maxCount={1}
-              >
-                {localState.imageUrl.length === 0 && (
-                  <button style={{ border: 0, background: 'none' }} type="button">
-                    <RiImageAddFill size={25} />
-                  </button>
-                )}
-              </Upload>
-            </Form.Item> */}
             <Form.Item
               name="username"
               label="Username"
@@ -293,9 +250,8 @@ const AccountSetting = () => {
             </Form.Item>
             <Form.Item>
               <Button
-                className={`bg-black text-white font-nikeBody ${
-                  localState.disable ? " bg-gray-500" : ""
-                }`}
+                className={`bg-black text-white font-nikeBody ${localState.disable ? " bg-gray-500" : ""
+                  }`}
                 disabled={localState.disable}
                 loading={localState.loading}
                 onClick={handleUpdateProfile}
