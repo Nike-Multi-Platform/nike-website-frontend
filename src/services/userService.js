@@ -270,3 +270,37 @@ export const getHistorySearch = async (userId) => {
     console.log("Error when get history search", error);
   }
 };
+
+export const changePassword = async (payload) => {
+  try {
+    const url = URL + "change-password";
+    const response = await axios.post(url, payload);
+    return response.data;
+  } catch (error) {
+    console.log("Error when change password", error);
+    let errorMessage;
+    if (error.response) {
+      switch (error.response.status) {
+        case 400:
+          errorMessage = error.response.data.message;
+          break;
+        case 404:
+          errorMessage = error.response.data.message;
+          break;
+        case 500:
+          errorMessage = "Server error.";
+          break;
+        default:
+          errorMessage =
+            error.response.data.message || "An unexpected error occurred.";
+      }
+    } else {
+      errorMessage = "Network error or server is unreachable.";
+    }
+    return {
+      success: false,
+      message: errorMessage,
+      status: error.response?.status || 0,
+    };
+  }
+};

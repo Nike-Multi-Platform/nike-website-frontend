@@ -61,11 +61,11 @@ const Login = () => {
         const errors = {};
 
         if (!loginState.data?.identifier || loginState.data.identifier.trim() === "") {
-            errors.identifier = "Vui lòng nhập email hoặc tên đăng nhập";
+            errors.identifier = "Please enter your email or username";
         }
 
         if (!loginState.data?.password || loginState.data.password.trim() === "") {
-            errors.password = "Vui lòng nhập mật khẩu";
+            errors.password = "Please enter your password";
         }
 
         if (Object.keys(errors).length > 0) {
@@ -93,7 +93,7 @@ const Login = () => {
                 console.log("Error when login", errorMessage);
             }
         } catch (error) {
-            message.error("Đã xảy ra lỗi khi đăng nhập");
+            message.error("Error when login");
             console.log("Error when login", error);
         } finally {
             setLoginState({ type: "loading", payload: false });
@@ -134,12 +134,12 @@ const Login = () => {
                     console.log("Error when login", errorMessage);
                 }
             } catch (error) {
-                message.error("Đã xảy ra lỗi khi đăng nhập");
+                message.error("Error when login");
                 console.log("Error when login", error);
             }
         } catch (error) {
             console.log("Error:", error);
-            message.error(error?.message || "Đăng nhập thất bại");
+            message.error(error?.message || "Login failed");
         }
     };
 
@@ -148,12 +148,12 @@ const Login = () => {
         const errors = {};
         // Validate identifier
         if (loginState.data?.identifier === "") {
-            errors.identifier = "Vui lòng nhập email hoặc tên đăng nhập";
+            errors.identifier = "Please enter your email or username";
         }
 
         // Validate password
         if (loginState.data?.password === "") {
-            errors.password = "Vui lòng nhập mật khẩu";
+            errors.password = "Please enter your password";
         }
 
         setLoginState({ type: "error", payload: errors });
