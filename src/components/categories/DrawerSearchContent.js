@@ -3,7 +3,7 @@ import HamanLogo from "../../assets/HamansLogo.png";
 import { Input, Tag, Upload } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import * as tf from '@tensorflow/tfjs';
+import * as tf from "@tensorflow/tfjs";
 
 import {
   getHistorySearch,
@@ -26,7 +26,7 @@ const DrawerSearchContent = (props) => {
       searchText: "",
       searchHistories: [],
       model: null,
-      imageAI: null
+      imageAI: null,
     }
   );
 
@@ -76,6 +76,30 @@ const DrawerSearchContent = (props) => {
       searchText: "Pants",
     },
   ];
+  function getStringBeforeShoes(input) {
+    // Tìm vị trí của từ 'shoes'
+    const shoesIndex = input.indexOf("shoes");
+
+    if (shoesIndex !== -1) {
+      // Lấy phần chuỗi trước 'shoes'
+      let result = input.substring(0, shoesIndex).replace(/_/g, " ").trim();
+
+      // Kiểm tra nếu chuỗi có chứa 'air force 1 07'
+      if (result.includes("air force 1 07")) {
+        return "air force 1 07";
+      }
+
+      // Nếu không, loại bỏ 'se' và trả về chuỗi còn lại
+      return result.replace(/\bse\b/g, "").trim();
+    }
+
+    // Nếu không tìm thấy từ 'shoes', xử lý tương tự
+    let result = input.replace(/_/g, " ").trim();
+    if (result.includes("air force 1 07")) {
+      return "air force 1 07";
+    }
+    return result.replace(/\bse\b/g, "").trim();
+  }
 
   const predict = async (inputTensor) => {
     if (!localState.model) return;
@@ -84,49 +108,58 @@ const DrawerSearchContent = (props) => {
     const prediction = localState.model.predict(inputTensor);
     prediction.print(); // Hoặc xử lý kết quả dự đoán
     console.log("Result", prediction);
-    prediction.array().then(data => {
-      console.log('Prediction Values:', data);
-      // Nếu là bài toán phân loại:
-      const labels = [
-        'air_force_1_07_easyon_shoes_LKXP_WhitePhoto Blue',
-        'air_force_1_07_next_nature_shoes_DV3808-107_WhiteWhiteVoltDusty Cactus'
-        , 'air_force_1_07_shoes_5fFrTT_FQ4296-100_WhiteWhiteAquarius Blue',
-        'air_force_1_07_shoes_7d5sHw_HF4298-100_WhiteFirPhantomObsidian',
-        'air_force_1_07_shoes_RgcF1Q_FZ7187-100_WhiteUniversity RedWhite',
-        'air_force_1_07_shoes_black_CW2288-001_BlackBlack',
-        'air_force_1_07_shoes_white_CW2288-111_WhiteWhite',
-        'air_force_1_low_evo_shoes_QcbnHZ_DV3907-900_Multi-ColourMulti-ColourMulti-Colour',
-        'air_force_1_shadow_shoes_DmvLlC_HF5064-100_WhitePhoto BlueLilac BloomAlchemy Pink',
-        'air_jordan_1_low_g_nrg_golf_shoe_FZ4159-100_WhiteBlack',
-        'air_jordan_1_low_se_craft_shoes_FQ3055-100_Pale IvoryLegend Light BrownSail',
-        'air_jordan_1_low_se_shoes_L9LvW5_HF5753-221_HempSailOatmealLight British Tan',
-        'air_jordan_1_low_se_shoes_hgcLbC_FN9137-141_WhiteBlue GreySailIndustrial Blue',
-        'air_jordan_1_low_se_shoes_nxMDqp_FZ3972-294_Pale Vanilla',
-        'air_jordan_1_low_se_shoes_xmgzfl_HF4823-100_WhiteLightningChlorophyll',
-        'air_jordan_1_low_se_shoes_xq1gdm',
-        'air_jordan_1_low_shoes_553558-161_WhiteVarsity RedWhiteBlack',
-        'air_jordan_1_low_shoes_ZHhKk2_DM1206-060_ BlackCement GreyWhiteFire Red',
-        'air_jordan_1_low_shoes_ZHhKk2_white_553560-132_WhiteBlack',
-        'air_jordan_1_low_shoes_zTWr01_553558-131_WhiteGreen Glow',
-        'air_jordan_1_mid-_shoes_7cdjgS_black',
-        'air_jordan_1_mid-_shoes_7cdjgS_white',
-        'air_jordan_1_mid_se_craft_shoes_ FQ3224-100_Pale IvoryLegend Light BrownSail',
-        'air_jordan_1_mid_se_shoes_4wVkRK_FN5031-100_WhiteWolf GreyMetallic Silver',
-        'air_jordan_1_mid_se_shoes_JFn5S2_FQ1926-161_Coconut MilkSailLegend Pink',
-        'air_jordan_1_mid_se_shoes_qG5ltp_FJ3458-160_WhiteDune RedSailLobster',
-        'air_jordan_1_mid_se_shoes_v8XHxD_FN5215-161_WhiteSailLegend Pink',
-        'air_jordan_1_mid_shoes_86f1ZW_FN5277-161_RedBlack',
-        'air_jordan_1_mid_shoes_SQf7DM_DQ8423-132_WhiteWhiteBlackBlack',
-        'jordan_1_low_alt_se_younger_shoe_FN9744-018_Football GreyPine Green',
-        'kid_FB4412-006_BlackWhiteVarsity Red'
-      ]; data.forEach((batch, index) => {
-        const maxIndex = batch.indexOf(Math.max(...batch));
-        console.log("Prediction for Batch ${ index + 1}:", labels[maxIndex]);
-        console.log("Prediction for Batch 2 ${ index + 1}:", maxIndex);
-        // setLocalState({ type: "imageAI", payload: labels[maxIndex] });
-      });
-    }).catch(err => console.error(err));
+    prediction
+      .array()
+      .then((data) => {
+        console.log("Prediction Values:", data);
+        // Nếu là bài toán phân loại:
+        const labels = [
+          "air_force_1_07_easyon_shoes_LKXP_WhitePhoto Blue",
+          "air_force_1_07_next_nature_shoes_DV3808-107_WhiteWhiteVoltDusty Cactus",
+          "air_force_1_07_shoes_5fFrTT_FQ4296-100_WhiteWhiteAquarius Blue",
+          "air_force_1_07_shoes_7d5sHw_HF4298-100_WhiteFirPhantomObsidian",
+          "air_force_1_07_shoes_RgcF1Q_FZ7187-100_WhiteUniversity RedWhite",
+          "air_force_1_07_shoes_black_CW2288-001_BlackBlack",
+          "air_force_1_07_shoes_white_CW2288-111_WhiteWhite",
+          "air_force_1_low_evo_shoes_QcbnHZ_DV3907-900_Multi-ColourMulti-ColourMulti-Colour",
+          "air_force_1_shadow_shoes_DmvLlC_HF5064-100_WhitePhoto BlueLilac BloomAlchemy Pink",
+          "air_jordan_1_low_g_nrg_golf_shoe_FZ4159-100_WhiteBlack",
+          "air_jordan_1_low_se_craft_shoes_FQ3055-100_Pale IvoryLegend Light BrownSail",
+          "air_jordan_1_low_se_shoes_L9LvW5_HF5753-221_HempSailOatmealLight British Tan",
+          "air_jordan_1_low_se_shoes_hgcLbC_FN9137-141_WhiteBlue GreySailIndustrial Blue",
+          "air_jordan_1_low_se_shoes_nxMDqp_FZ3972-294_Pale Vanilla",
+          "air_jordan_1_low_se_shoes_xmgzfl_HF4823-100_WhiteLightningChlorophyll",
+          "air_jordan_1_low_se_shoes_xq1gdm",
+          "air_jordan_1_low_shoes_553558-161_WhiteVarsity RedWhiteBlack",
+          "air_jordan_1_low_shoes_ZHhKk2_DM1206-060_ BlackCement GreyWhiteFire Red",
+          "air_jordan_1_low_shoes_ZHhKk2_white_553560-132_WhiteBlack",
+          "air_jordan_1_low_shoes_zTWr01_553558-131_WhiteGreen Glow",
+          "air_jordan_1_mid-_shoes_7cdjgS_black",
+          "air_jordan_1_mid-_shoes_7cdjgS_white",
+          "air_jordan_1_mid_se_craft_shoes_ FQ3224-100_Pale IvoryLegend Light BrownSail",
+          "air_jordan_1_mid_se_shoes_4wVkRK_FN5031-100_WhiteWolf GreyMetallic Silver",
+          "air_jordan_1_mid_se_shoes_JFn5S2_FQ1926-161_Coconut MilkSailLegend Pink",
+          "air_jordan_1_mid_se_shoes_qG5ltp_FJ3458-160_WhiteDune RedSailLobster",
+          "air_jordan_1_mid_se_shoes_v8XHxD_FN5215-161_WhiteSailLegend Pink",
+          "air_jordan_1_mid_shoes_86f1ZW_FN5277-161_RedBlack",
+          "air_jordan_1_mid_shoes_SQf7DM_DQ8423-132_WhiteWhiteBlackBlack",
+          "jordan_1_low_alt_se_younger_shoe_FN9744-018_Football GreyPine Green",
+          "kid_FB4412-006_BlackWhiteVarsity Red",
+        ];
+        data.forEach((batch, index) => {
+          const maxIndex = batch.indexOf(Math.max(...batch));
+          console.log("Prediction for Batch ${ index + 1}:", labels[maxIndex]);
+          console.log("Prediction for Batch 2 ${ index + 1}:", maxIndex);
+          setLocalState({
+            type: "searchText",
+            payload: getStringBeforeShoes(labels[maxIndex]),
+          });
+          // setLocalState({ type: "imageAI", payload: labels[maxIndex] });
+        });
+      })
+      .catch((err) => console.error(err));
   };
+
   const handleUploadImage = async (file) => {
     if (!(file instanceof Blob)) {
       console.error("The provided file is not a valid Blob or File object.");
@@ -138,7 +171,8 @@ const DrawerSearchContent = (props) => {
       const img = new Image();
       img.src = e.target.result;
       img.onload = () => {
-        const inputTensor = tf.browser.fromPixels(img)
+        const inputTensor = tf.browser
+          .fromPixels(img)
           .resizeNearestNeighbor([128, 128]) // Resize to the required model size
           .toFloat()
           .expandDims();
@@ -175,17 +209,15 @@ const DrawerSearchContent = (props) => {
   useEffect(() => {
     const loadModel = async () => {
       try {
-
-        const loadedModel = await tf.loadLayersModel('/modeljs/model.json');
+        const loadedModel = await tf.loadLayersModel("/modeljs/model.json");
         setLocalState({ type: "model", payload: loadedModel });
       } catch (error) {
-        console.error('Lỗi khi tải mô hình:', error);
+        console.error("Lỗi khi tải mô hình:", error);
       }
     };
 
     loadModel();
-
-  }, [])
+  }, []);
 
   return (
     <div className="p-4">
