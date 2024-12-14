@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useReducer } from "react";
 import HamanLogo from "../../assets/HamansLogo.png";
-import { Input, Tag, Upload } from "antd";
+import { Input, message, Tag, Upload } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import * as tf from "@tensorflow/tfjs";
@@ -77,28 +77,16 @@ const DrawerSearchContent = (props) => {
     },
   ];
   function getStringBeforeShoes(input) {
-    // Tìm vị trí của từ 'shoes'
-    const shoesIndex = input.indexOf("shoes");
+    const match = input.match(/([A-Z0-9]+-[A-Z0-9]+)/);
 
-    if (shoesIndex !== -1) {
-      // Lấy phần chuỗi trước 'shoes'
-      let result = input.substring(0, shoesIndex).replace(/_/g, " ").trim();
-
-      // Kiểm tra nếu chuỗi có chứa 'air force 1 07'
-      if (result.includes("air force 1 07")) {
-        return "air force 1 07";
-      }
-
-      // Nếu không, loại bỏ 'se' và trả về chuỗi còn lại
-      return result.replace(/\bse\b/g, "").trim();
+    // Nếu tìm thấy đoạn phù hợp, trả về
+    if (match) {
+      return match[0];
     }
 
-    // Nếu không tìm thấy từ 'shoes', xử lý tương tự
-    let result = input.replace(/_/g, " ").trim();
-    if (result.includes("air force 1 07")) {
-      return "air force 1 07";
-    }
-    return result.replace(/\bse\b/g, "").trim();
+    // Nếu không tìm thấy, trả về chuỗi rỗng
+    return "";
+
   }
 
   const predict = async (inputTensor) => {
@@ -150,10 +138,17 @@ const DrawerSearchContent = (props) => {
           const maxIndex = batch.indexOf(Math.max(...batch));
           console.log("Prediction for Batch ${ index + 1}:", labels[maxIndex]);
           console.log("Prediction for Batch 2 ${ index + 1}:", maxIndex);
-          setLocalState({
-            type: "searchText",
-            payload: getStringBeforeShoes(labels[maxIndex]),
-          });
+          const product_style_code = getStringBeforeShoes(labels[maxIndex]);
+          if (product_style_code === "")
+          {
+            message.error("No product found");
+          }
+          else{
+            setLocalState({
+              type: "searchText",
+              payload: getStringBeforeShoes(labels[maxIndex]),
+            });
+          }
           // setLocalState({ type: "imageAI", payload: labels[maxIndex] });
         });
       })
