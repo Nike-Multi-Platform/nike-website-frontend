@@ -144,10 +144,11 @@ const DrawerSearchContent = (props) => {
             message.error("No product found");
           }
           else{
-            setLocalState({
-              type: "searchText",
-              payload: getStringBeforeShoes(labels[maxIndex]),
-            });
+            onSearch(getStringBeforeShoes(labels[maxIndex]));
+            // setLocalState({
+            //   type: "searchText",
+            //   payload: getStringBeforeShoes(labels[maxIndex]),
+            // });
           }
           // setLocalState({ type: "imageAI", payload: labels[maxIndex] });
         });
