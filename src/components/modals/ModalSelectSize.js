@@ -84,7 +84,10 @@ const ModalSelectSize = (props) => {
       await handleUpdateSize();
     }
   }, [handleAddToBag, handleUpdateSize, type]);
+  const handleSubmitAddToBag = useCallback(async () => {
+    await handleAddToBag();
 
+  }, [handleAddToBag]);
   return (
     <Modal
       open={open}
@@ -123,11 +126,10 @@ const ModalSelectSize = (props) => {
                     size?.quantity < 1 ||
                     size?.productSizeId === item?.product_size_id
                   }
-                  className={`col-span-3 ${
-                    localState?.currentSize === size.productSizeId
-                      ? "bg-red-500 text-white border-red-500"
-                      : ""
-                  }`}
+                  className={`col-span-3 ${localState?.currentSize === size.productSizeId
+                    ? "bg-red-500 text-white border-red-500"
+                    : ""
+                    }`}
                   onClick={() =>
                     setLocalState({
                       type: "currentSize",
@@ -140,14 +142,25 @@ const ModalSelectSize = (props) => {
               ))}
             </div>
           </div>
-          <Button
-            className="absolute bottom-0 w-full rounded-full bg-red-500 text-white hover:opacity-80 border-red-500"
-            size="large"
-            disabled={!localState?.currentSize}
-            onClick={handleSubmit}
-          >
-            {type === "add" ? "Add to Bag" : "Update Size"}
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button
+              className="absolute bottom-12 w-full rounded-full bg-black text-white hover:opacity-80 border-black"
+              size="large"
+              disabled={!localState?.currentSize}
+              onClick={handleSubmitAddToBag}
+            >
+              Add to Bag
+            </Button>
+            <Button
+              className="absolute bottom-0 w-full rounded-full bg-red-500 text-white hover:opacity-80 border-red-500"
+              size="large"
+              disabled={!localState?.currentSize}
+              onClick={handleSubmit}
+            >
+              {type === "add" ? "Add to Bag" : "Update Size"}
+            </Button>
+          </div>
+
         </div>
       </div>
     </Modal>
